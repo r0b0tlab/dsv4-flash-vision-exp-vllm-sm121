@@ -1,0 +1,56 @@
+{
+  "schema_version": 3,
+  "method": "multikey_lastneedle_90pct",
+  "model": "deepseek-v4-flash-vision-exp",
+  "results": {
+    "mk33": {
+      "label": "mk33",
+      "requested_depth": 0.9,
+      "multikey": true,
+      "target_prompt_tokens": 262080,
+      "raw_prompt_tokens": 240241,
+      "distractor_nonces": [
+        "ni4h7q2x9",
+        "k7d2m8v4"
+      ],
+      "probe_nonce": "t3r9w5y1",
+      "needle_depths": [
+        0.33,
+        0.66,
+        0.9
+      ],
+      "api_prompt_tokens": 240282,
+      "completion_tokens": 9,
+      "elapsed_s": 140.399,
+      "response": "t3r9w5y1",
+      "needle_retrieved": true,
+      "transport_ok": true,
+      "finished_utc": "2026-09-01T07:37:41.106149+00:00"
+    },
+    "mk66": {
+      "label": "mk66",
+      "requested_depth": 0.9,
+      "multikey": true,
+      "target_prompt_tokens": 262080,
+      "raw_prompt_tokens": 240241,
+      "distractor_nonces": [
+        "ni4h7q2x9",
+        "k7d2m8v4"
+      ],
+      "probe_nonce": "t3r9w5y1",
+      "needle_depths": [
+        0.33,
+        0.66,
+        0.9
+      ],
+      "api_prompt_tokens": 240282,
+      "completion_tokens": 9,
+      "elapsed_s": 19.769,
+      "response": "t3r9w5y1",
+      "needle_retrieved": true,
+      "transport_ok": true,
+      "finished_utc": "2026-09-01T07:38:02.201926+00:00"
+    }
+  },
+  "verdict": "NIAH_PASS"
+}
