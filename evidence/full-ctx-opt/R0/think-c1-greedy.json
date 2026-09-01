@@ -1,0 +1,41 @@
+{
+  "summary": {
+    "n": 2,
+    "total_completion_tokens": 2342,
+    "wall_s": 52.87,
+    "aggregate_out_tok_s": 44.3,
+    "per_stream_tok_s": {
+      "min": 43.89,
+      "med": 44.73,
+      "max": 44.73
+    },
+    "mean_completion_tokens": 1171.0,
+    "reasoning_present_frac": 1.0,
+    "finish_reasons": [
+      "stop"
+    ],
+    "label": "R0-c1-greedy",
+    "effort": "max",
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "concurrency": 1,
+    "accept_len_before": null,
+    "accept_len_after": null
+  },
+  "results": [
+    {
+      "dt": 25.976955890655518,
+      "completion_tokens": 1162,
+      "prompt_tokens": 153,
+      "has_reasoning": true,
+      "finish": "stop"
+    },
+    {
+      "dt": 26.8880877494812,
+      "completion_tokens": 1180,
+      "prompt_tokens": 153,
+      "has_reasoning": true,
+      "finish": "stop"
+    }
+  ]
+}

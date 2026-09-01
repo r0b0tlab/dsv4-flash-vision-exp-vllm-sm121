@@ -1,0 +1,56 @@
+{
+  "summary": {
+    "n": 4,
+    "total_completion_tokens": 14928,
+    "wall_s": 265.63,
+    "aggregate_out_tok_s": 56.2,
+    "per_stream_tok_s": {
+      "min": 19.91,
+      "med": 22.0,
+      "max": 23.13
+    },
+    "mean_completion_tokens": 3732.0,
+    "reasoning_present_frac": 1.0,
+    "finish_reasons": [
+      "length",
+      "stop"
+    ],
+    "label": "R0-c4-t1",
+    "effort": "max",
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "concurrency": 4,
+    "accept_len_before": null,
+    "accept_len_after": null
+  },
+  "results": [
+    {
+      "dt": 64.94497394561768,
+      "completion_tokens": 1342,
+      "prompt_tokens": 153,
+      "has_reasoning": true,
+      "finish": "stop"
+    },
+    {
+      "dt": 119.98250722885132,
+      "completion_tokens": 2389,
+      "prompt_tokens": 136,
+      "has_reasoning": true,
+      "finish": "stop"
+    },
+    {
+      "dt": 265.6268730163574,
+      "completion_tokens": 6144,
+      "prompt_tokens": 124,
+      "has_reasoning": true,
+      "finish": "length"
+    },
+    {
+      "dt": 229.69399976730347,
+      "completion_tokens": 5053,
+      "prompt_tokens": 136,
+      "has_reasoning": true,
+      "finish": "stop"
+    }
+  ]
+}

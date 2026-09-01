@@ -1,0 +1,6 @@
+GATES: pass=5 fail=0
+prompt_tokens default=97 low=5 high=84 max=97
+EFFORT PROBE: PASS
+reasoning_content_len on short 17*23 probe was 0 (think tokens leaked into content as </think>); think_bench reasoning_present_frac=1.0
+max_model_len=1048576
+max_total_num_tokens=1690880
