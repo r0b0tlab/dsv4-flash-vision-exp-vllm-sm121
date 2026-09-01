@@ -146,7 +146,7 @@ ssh -o BatchMode=yes "${WORKER_SSH}" docker run -d --name "${NAME}" \
   -e NODE_RANK=1 \
   -e NCCL_IB_HCA="${RANK1_HCA}" \
   -e NCCL_SOCKET_IFNAME="${RANK1_ETH_IF}" \
-  "${RUNTIME_IMAGE_REF}" -lc "$(serve_cmd 1 x "${RANK1_ETH_IF}" "${RANK1_HCA}")"
+  "${RUNTIME_IMAGE_REF}" -lc "$(printf '%q' "$(serve_cmd 1 x)")"
 
 echo "== starting rank0 head (this node, ${HEAD_IP}) =="
 docker run -d --name "${NAME}" \
