@@ -1,0 +1,10 @@
+# Pre-change identity 2026-09-01T16:14 CDT (before R0 1M relaunch)
+image: sha256:86466ee96176b3374c0ce71d3e3d7fc36d050b420770bf62757095882ce2b842
+cmd: --context-length 262144 --mem-fraction-static 0.85 --speculative-algorithm DSPARK --speculative-dspark-block-size 5
+max_running_requests: 256 (DSV4 auto)
+max_total_num_tokens: 1142784
+context_len: 262144
+available_gpu_mem_after_graphs: 6.11 GB
+cuda_graph: target_verify=164.92s draft_decode=26.47s
+engine_e2e: 974.22s
+t-opt FINAL: compact + fused-greedy-Markov, c1 38.51 / c2 56.04 / c4 60-65 / c8 83-98
