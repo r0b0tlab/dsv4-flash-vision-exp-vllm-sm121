@@ -4,4 +4,7 @@ COPY sgl-src/ /sgl-src/
 RUN pip install --no-cache-dir --no-build-isolation /sgl-src/python[dev]
 COPY patch_sglang_trackt.py /tmp/patch_sglang_trackt.py
 RUN python3 /tmp/patch_sglang_trackt.py
+# align flashinfer cubin with python (PyPI cubin stops at 0.6.17; 0.6.18 lives on the FI index)
+RUN pip install --no-cache-dir flashinfer-cubin==0.6.18 --index-url https://flashinfer.ai/whl \
+    && pip install --no-cache-dir flashinfer-jit-cache==0.6.18 --index-url https://flashinfer.ai/whl/cu130
 ENV SGLANG_DSV4_FP4_EXPERTS_INFER=1
