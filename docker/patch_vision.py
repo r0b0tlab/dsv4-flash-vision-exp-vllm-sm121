@@ -10,7 +10,11 @@ P = pathlib.Path(
     "/usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/model.py"
 )
 OLD = 'AutoWeightsLoader(self, skip_substrs=["mtp."])'
-NEW = 'AutoWeightsLoader(self, skip_substrs=["mtp.", "vision.", "aligner"])'
+NEW = (
+    'AutoWeightsLoader(self, skip_substrs=['
+    '"mtp.", "vision.", "aligner", '
+    '"image_start", "image_end", "image_newline", "image_pad"])'
+)
 text = P.read_text()
 assert OLD in text, "anchor not found — stock file changed?"
 P.write_text(text.replace(OLD, NEW))
