@@ -143,7 +143,7 @@ ssh -o BatchMode=yes "${WORKER_SSH}" docker run -d --name "${NAME}" \
   -e NODE_RANK=1 \
   -e NCCL_IB_HCA="${RANK1_HCA}" \
   -e NCCL_SOCKET_IFNAME="${RANK1_ETH_IF}" \
-  "${RUNTIME_IMAGE_REF}" bash -lc "$(printf '%q' "$(serve_cmd 1 --headless "${RANK1_ETH_IF}" "${RANK1_HCA}")")"
+  "${RUNTIME_IMAGE_REF}" -lc "$(printf '%q' "$(serve_cmd 1 --headless "${RANK1_ETH_IF}" "${RANK1_HCA}")")"
 
 echo "== starting rank0 head (this node, ${HEAD_IP}) =="
 docker run -d --name "${NAME}" \
@@ -153,7 +153,7 @@ docker run -d --name "${NAME}" \
   -e NODE_RANK=0 \
   -e NCCL_IB_HCA="${RANK0_HCA}" \
   -e NCCL_SOCKET_IFNAME="${RANK0_ETH_IF}" \
-  "${RUNTIME_IMAGE_REF}" bash -lc "$(printf '%q' "$(serve_cmd 0 '' "${RANK0_ETH_IF}" "${RANK0_HCA}")")"
+  "${RUNTIME_IMAGE_REF}" -lc "$(printf '%q' "$(serve_cmd 0 '' "${RANK0_ETH_IF}" "${RANK0_HCA}")")"
 
 echo "API: http://${HEAD_IP}:${PORT}/v1/models  (also via mgmt: http://192.168.3.2:${PORT})"
 echo "Logs: docker logs -f ${NAME} (node3/rank0) ; ssh ${WORKER_SSH} docker logs -f ${NAME} (node2/rank1)"
