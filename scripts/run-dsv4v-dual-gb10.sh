@@ -19,7 +19,7 @@ GPU_MEMORY_UTILIZATION="${GPU_MEMORY_UTILIZATION:-0.835}"
 KV_CACHE_MEMORY_BYTES="${KV_CACHE_MEMORY_BYTES:-}"
 SPEC_TOKENS="${SPEC_TOKENS:-6}"   # must be divisible by num_nextn_predict_layers=3 (engine rule); 6 = v026 production K
 KV_CACHE_DTYPE="${KV_CACHE_DTYPE:-nvfp4}"
-MOE_BACKEND="${MOE_BACKEND:-flashinfer_b12x}"
+MOE_BACKEND="${MOE_BACKEND:-}"   # empty = engine default (stock v0.28 MXFP4 path = DeepGEMM E8M0; b12x not allowed for MXFP4)
 ENFORCE_EAGER="${ENFORCE_EAGER:-0}"
 # Stock v0.28.0: {"cudagraph_mode":"FULL"} (NONE|PIECEWISE|FULL).
 # If the v026 knownfix selector port lands, override with:
@@ -37,7 +37,7 @@ FLASHINFER_CACHE="${FLASHINFER_CACHE:-${HOME}/.cache/dsv4v-flashinfer}"
 fail() { echo "ERROR: $*" >&2; exit 1; }
 
 [[ "${KV_CACHE_DTYPE}" =~ ^(nvfp4|nvfp4_4over6|fp8_ds_mla)$ ]] || fail "KV_CACHE_DTYPE must be nvfp4|nvfp4_4over6|fp8_ds_mla"
-[[ "${MOE_BACKEND}" == "flashinfer_b12x" ]] || fail "MOE_BACKEND must be flashinfer_b12x"
+[[ -z "${MOE_BACKEND}" || "${MOE_BACKEND}" == "auto" ]] || fail "MOE_BACKEND must be empty/auto (stock v0.28 MXFP4 = DeepGEMM E8M0; flashinfer_b12x not supported for MXFP4)"
 [[ "${ENFORCE_EAGER}" =~ ^[01]$ ]] || fail "ENFORCE_EAGER must be 0 or 1"
 [[ -d "${MODEL_DIR}" ]] || fail "model dir not found: ${MODEL_DIR}"
 [[ -f "${MODEL_DIR}/model.safetensors.index.json" ]] || fail "model index missing — pull incomplete"
@@ -120,7 +120,6 @@ serve_cmd() {
     --reasoning-parser deepseek_v4
     --default-chat-template-kwargs '{"thinking":true}'
     --compilation-config "${COMPILATION_CONFIG_JSON}"
-    --moe-backend "${MOE_BACKEND}"
     --distributed-executor-backend mp
     --nnodes 2 --node-rank "${rank}"
     --master-addr "${HEAD_IP}" --master-port "${MASTER_PORT}"
@@ -128,6 +127,7 @@ serve_cmd() {
   [[ -n "${KV_CACHE_MEMORY_BYTES}" ]] && c+=(--kv-cache-memory-bytes "${KV_CACHE_MEMORY_BYTES}")
   [[ "${ENFORCE_EAGER}" == "1" ]] && c+=(--enforce-eager)
   [[ -n "${headless}" ]] && c+=(--headless)
+  [[ -n "${MOE_BACKEND}" && "${MOE_BACKEND}" != "auto" ]] && c+=(--moe-backend "${MOE_BACKEND}")
   printf '%q ' "${c[@]}"
 }
 
