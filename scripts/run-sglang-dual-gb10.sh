@@ -67,7 +67,9 @@ common=( --gpus all --ipc=host --network host --shm-size=64g
   -e NCCL_IB_GID_INDEX="${NCCL_GID}"
   -e NCCL_IB_HCA=roceP2p1s0f0
   -e NCCL_SOCKET_IFNAME=enP2p1s0f0np0
-  -e SGLANG_USE_DEEPGEMM=1 )
+  -e SGLANG_USE_DEEPGEMM=1
+  -e SGLANG_RAGGED_VERIFY_MODE="${SG_RAGGED:-compact}"
+  -e SGLANG_DSPARK_OPT_FUSED_GREEDY_MARKOV="${SG_FUSED_MARKOV:-1}" )
 
 echo "== rank1 (node2) =="
 ssh -o BatchMode=yes "${WORKER_SSH}" docker run -d --name "${NAME}" \
