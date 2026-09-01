@@ -31,6 +31,7 @@ RANK0_ETH_IF="${RANK0_ETH_IF:-enP2p1s0f1np1}"
 RANK0_HCA="${RANK0_HCA:-roceP2p1s0f1}"
 RANK1_ETH_IF="${RANK1_ETH_IF:-enP2p1s0f0np0}"
 RANK1_HCA="${RANK1_HCA:-roceP2p1s0f0}"
+ATTENTION_BACKEND="${ATTENTION_BACKEND:-}"   # e.g. FLASHMLA_SPARSE_DSV4 (FlashInfer DSV4 sparse decode needs flashinfer PR #4380, absent in stock wheel)
 NCCL_IB_GID_INDEX="${NCCL_IB_GID_INDEX:-3}"
 FLASHINFER_CACHE="${FLASHINFER_CACHE:-${HOME}/.cache/dsv4v-flashinfer}"
 
@@ -128,6 +129,7 @@ serve_cmd() {
   [[ "${ENFORCE_EAGER}" == "1" ]] && c+=(--enforce-eager)
   [[ -n "${headless}" ]] && c+=(--headless)
   [[ -n "${MOE_BACKEND}" && "${MOE_BACKEND}" != "auto" ]] && c+=(--moe-backend "${MOE_BACKEND}")
+  [[ -n "${ATTENTION_BACKEND}" && "${ATTENTION_BACKEND}" != "auto" ]] && c+=(--attention-backend "${ATTENTION_BACKEND}")
   printf '%q ' "${c[@]}"
 }
 
