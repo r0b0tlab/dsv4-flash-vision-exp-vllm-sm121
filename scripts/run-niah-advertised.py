@@ -30,6 +30,11 @@ SYSTEM = (
 MULTIKEY_NONCES = ["ni4h7q2x9", "k7d2m8v4", "t3r9w5y1"]
 
 
+def get_json(url, timeout=30):
+    with urllib.request.urlopen(url, timeout=timeout) as response:
+        return json.load(response)
+
+
 def request_json(url, payload, timeout):
     request = urllib.request.Request(
         url,
@@ -45,7 +50,7 @@ def request_json(url, payload, timeout):
 
 
 def get_served_model(base):
-    data = request_json(base + "/v1/models", {}, 600)
+    data = get_json(base + "/v1/models", 600)
     return data["data"][0]["id"]
 
 
