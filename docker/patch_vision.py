@@ -94,5 +94,37 @@ NEW_D = (
 assert OLD_D in dtext, "dspark anchor not found"
 D.write_text(dtext.replace(OLD_D, NEW_D))
 
+# 5) sparse_swa.py: build_tile_scheduler early-returns all-None on
+#    device-capability family 120 (SM121), assuming the FlashInfer DSV4
+#    backend. With FLASHMLA_SPARSE_DSV4 forced (stock flashinfer wheel lacks
+#    the SM120 sparse decode specialization, PR #4380), flashmla.py asserts
+#    tile_sched entries are non-None. The empty SchedMeta allocation is
+#    harmless for the FlashInfer path (it ignores tile_sched_*), so allocate
+#    on all CUDA platforms.
+S = pathlib.Path(
+    "/usr/local/lib/python3.12/dist-packages/vllm/v1/attention/backends/"
+    "mla/sparse_swa.py"
+)
+stext = S.read_text()
+OLD_S = (
+    "        if (\n"
+    "            num_decode_tokens == 0\n"
+    "            or current_platform.is_rocm()\n"
+    "            or current_platform.is_xpu()\n"
+    "            or current_platform.is_device_capability_family(120)\n"
+    "        ):\n"
+    "            return out\n"
+)
+NEW_S = (
+    "        if (\n"
+    "            num_decode_tokens == 0\n"
+    "            or current_platform.is_rocm()\n"
+    "            or current_platform.is_xpu()\n"
+    "        ):\n"
+    "            return out\n"
+)
+assert OLD_S in stext, "sparse_swa guard anchor not found"
+S.write_text(stext.replace(OLD_S, NEW_S))
+
 P.write_text(text)
-print("PATCHED v5 (target+draft loader bias_vl drop + zero-bias)", P)
+print("PATCHED v6 (target+draft loader + tile_sched family-120 guard)", P)
