@@ -27,6 +27,11 @@ SYSTEM = (
     "line beginning with NEEDLE:. Ignore the surrounding filler and answer the final "
     "question with only the value from that line."
 )
+MULTIKEY_SUFFIX = (
+    "\nEND DOCUMENT\n"
+    "Question: Several lines begin with NEEDLE:. What is the exact value in "
+    "the LAST NEEDLE line? Answer with only that value."
+)
 MULTIKEY_NONCES = ["ni4h7q2x9", "k7d2m8v4", "t3r9w5y1"]
 
 
@@ -94,42 +99,46 @@ def build_document(base, model, target_tokens, depth):
     return doc, meta
 
 
-def build_multikey(base, model, target_tokens, probe_depth):
+def build_multikey(base, model, target_tokens):
+    """Distractor needles at 33%/66%; probe needle at 90% (deepest).
+
+    The question explicitly asks for the LAST needle line — otherwise the
+    model reasonably returns the first match and the case measures prompt
+    ambiguity, not retrieval.
+    """
     filler_tokens = len(tokenize(base, model, FILLER))
     line1 = f"\nNEEDLE: {MULTIKEY_NONCES[0]}\n"
     line2 = f"\nNEEDLE: {MULTIKEY_NONCES[1]}\n"
     line3 = f"\nNEEDLE: {MULTIKEY_NONCES[2]}\n"
-    fixed = len(tokenize(base, model, PREFIX + line1 + line2 + line3 + SUFFIX))
+    fixed = len(tokenize(base, model, PREFIX + line1 + line2 + line3 + MULTIKEY_SUFFIX))
     total_repeats = max(3, (target_tokens - fixed) // filler_tokens)
     c1 = int(total_repeats * 0.33)
     c2 = int(total_repeats * 0.66) - c1
-    c3 = int(total_repeats * probe_depth) - c1 - c2
+    c3 = int(total_repeats * 0.90) - c1 - c2
     c4 = total_repeats - c1 - c2 - c3
     if min(c1, c2, c3, c4) < 1:
-        c1 = 1
-        c2 = 1
-        c3 = max(1, int(total_repeats * probe_depth) - 2)
+        c1, c2, c3 = 1, 1, max(1, int(total_repeats * 0.90) - 2)
         c4 = max(1, total_repeats - c1 - c2 - c3)
     doc = (
         PREFIX
         + FILLER * c1 + line1
         + FILLER * c2 + line2
         + FILLER * c3 + line3
-        + FILLER * c4 + SUFFIX
+        + FILLER * c4 + MULTIKEY_SUFFIX
     )
     meta = {
         "target_prompt_tokens": target_tokens,
         "raw_prompt_tokens": len(tokenize(base, model, doc)),
         "distractor_nonces": MULTIKEY_NONCES[:2],
         "probe_nonce": MULTIKEY_NONCES[2],
-        "needle_depths": [0.33, 0.66, probe_depth],
+        "needle_depths": [0.33, 0.66, 0.90],
     }
     return doc, meta
 
 
 def run_case(base, model, label, depth, target_tokens, multikey=False):
     if multikey:
-        document, construction = build_multikey(base, model, target_tokens, depth)
+        document, construction = build_multikey(base, model, target_tokens)
         expected = MULTIKEY_NONCES[2]
     else:
         document, construction = build_document(base, model, target_tokens, depth)
