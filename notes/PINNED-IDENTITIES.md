@@ -5,5 +5,5 @@ rank0     node2 r0b0tdgx1  ring 192.168.1.2   (user r0b0tdgx)
 rank1     node3 gn100-2eea ring 192.168.3.2
 node2->node3 lane: 192.168.5.2 (verified)
 kv target nvfp4 (v0.28.0 enum: nvfp4 | nvfp4_4over6; nvfp4_ds_mla REMOVED)
-spec      {"method":"dspark","num_speculative_tokens":7,"draft_sample_method":"greedy"}  # no "model" key - packaged head
+spec      {"method":"dspark","num_speculative_tokens":6,"draft_sample_method":"greedy"}  # K divisible by nextn=3 (engine rule); packaged head has 3 layers
 deletion authorizations 2026-08-31: Ornith-1.0-397B (all nodes); qwen38-flash-next BF16 SOURCE only (candidate/builds/qwen38-live PROTECTED)
