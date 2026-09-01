@@ -32,7 +32,7 @@ REMOTE_ID="$(ssh -o BatchMode=yes "${WORKER_SSH}" "docker image inspect '${IMAGE
 [[ "${LOCAL_ID}" == "${REMOTE_ID}" ]] || fail "image parity fail: ${LOCAL_ID} != ${REMOTE_ID}"
 
 server_cmd() {
-  local rank="$1" headless="$2"
+  local rank="$1"
   local -a c=(
     python3 -m sglang.launch_server --model-path /model --trust-remote-code
     --served-model-name "${SERVED}"
@@ -45,7 +45,6 @@ server_cmd() {
     --speculative-algorithm "${SPEC_ALGO}"
     --speculative-dspark-block-size "${SPEC_GAMMA}"
   )
-  [[ -n "${headless}" ]] && c+=(--headless)
   if [[ -n "${EXTRA_ARGS}" ]]; then read -r -a extra <<< "${EXTRA_ARGS}"; c+=("${extra[@]}"); fi
   printf '%q ' "${c[@]}"
 }
@@ -67,14 +66,14 @@ ssh -o BatchMode=yes "${WORKER_SSH}" docker run -d --name "${NAME}" \
   "${common[@]}" \
   -e NCCL_IB_HCA=roceP2p1s0f0 -e NCCL_SOCKET_IFNAME=enP2p1s0f0np0 \
   -v "${WORKER_MODEL_DIR}:/model:ro" \
-  "${IMAGE}" bash -c "$(server_cmd 1 --headless)"
+  "${IMAGE}" bash -c "$(server_cmd 1)"
 
 echo "== rank0 (node3) =="
 docker run -d --name "${NAME}" \
   "${common[@]}" \
   -e NCCL_IB_HCA=roceP2p1s0f1 -e NCCL_SOCKET_IFNAME=enP2p1s0f1np1 \
   -v "${MODEL_DIR}:/model:ro" \
-  "${IMAGE}" bash -c "$(server_cmd 0 '')"
+  "${IMAGE}" bash -c "$(server_cmd 0)"
 
 echo "API: http://${HEAD_IP}:${PORT}/v1/models (mgmt: http://192.168.3.2:${PORT})"
 echo "logs: docker logs -f ${NAME} (here) | ssh ${WORKER_SSH} docker logs -f ${NAME}"
