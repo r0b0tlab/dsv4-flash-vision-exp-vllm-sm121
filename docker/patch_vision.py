@@ -1,11 +1,21 @@
 """Patch stock v0.28.0 deepseek_v4 for the Vision-Exp checkpoint (text-only serving).
 
-1. Loader: skip homeless vision tensors (vision.*, aligner, image_*).
-2. Router bias: this checkpoint uses noaux_tc + sqrtsoftplus with NO
-   e_score_correction_bias tensors (trained bias-free). Stock code eagerly
-   creates the bias param when topk_method == noaux_tc and then the loader
-   KeyErrors on the missing weight. Fix: init the param to zeros and skip its
-   weight — zero bias is mathematically identical to no bias.
+Checkpoint facts (verified against index + reference inference/model.py):
+- Carries homeless vision tensors: vision.*, aligner.*, image_start, image_end,
+  image_newline, image_pad. Stock vLLM has no deepseek_v4 vision wrapper.
+- Router: topk_method=noaux_tc + scoring_func=sqrtsoftplus, has bias_vl
+  (vision-token routing bias) but NO e_score_correction_bias tensors for the
+  39 non-hash MoE layers. Bias shifts expert SELECTION only, never the
+  routing weights (weights = f(original_scores) in the reference), so with
+  text-only input the bias has no effect. Zero-init is mathematically exact.
+
+Patches (all in vllm/models/deepseek_v4/nvidia/model.py):
+1. AutoWeightsLoader skip list += vision/aligner/image_* prefixes.
+2. Gate param creation: zero-init e_score_correction_bias (bias-free recipe).
+3. Layer.load_weights: early-continue for gate.bias_vl / e_score_correction_bias
+   names (text serving: selection bias unused; AutoWeightsLoader has already
+   returned by the time the generator reaches these, so the skip list cannot
+   handle them).
 """
 import pathlib
 
@@ -20,7 +30,7 @@ NEW_LOADER = (
     'AutoWeightsLoader(self, skip_substrs=['
     '"mtp.", "vision.", "aligner", '
     '"image_start", "image_end", "image_newline", "image_pad", '
-    '"e_score_correction_bias"])'
+    '"e_score_correction_bias", "gate.bias_vl"])'
 )
 assert OLD_LOADER in text, "loader anchor not found"
 text = text.replace(OLD_LOADER, NEW_LOADER)
@@ -37,5 +47,28 @@ NEW_BIAS = (
 assert OLD_BIAS in text, "bias anchor not found"
 text = text.replace(OLD_BIAS, NEW_BIAS)
 
+# 3) router-bias drop in the layer-level load_weights loop.
+#    Inserted right before the attention-sink branch so it precedes the final
+#    else that would otherwise KeyError into params_dict.
+OLD_LOOP = (
+    "                elif \"attn_sink\" in name:\n"
+    "                    if is_pp_missing_parameter(name, self):\n"
+    "                        continue\n"
+    "                    narrow_weight = loaded_weight[head_rank_start:head_rank_end]\n"
+)
+NEW_LOOP = (
+    "                elif (\"gate.bias_vl\" in name\n"
+    "                        or \"e_score_correction_bias\" in name):\n"
+    "                    # Vision-Exp router bias: selection-only, unused for\n"
+    "                    # text-only serving (see reference inference/model.py).\n"
+    "                    continue\n"
+    "                elif \"attn_sink\" in name:\n"
+    "                    if is_pp_missing_parameter(name, self):\n"
+    "                        continue\n"
+    "                    narrow_weight = loaded_weight[head_rank_start:head_rank_end]\n"
+)
+assert OLD_LOOP in text, "loop anchor not found"
+text = text.replace(OLD_LOOP, NEW_LOOP)
+
 P.write_text(text)
-print("PATCHED (vision-skip + zero-bias)", P)
+print("PATCHED v4 (vision-skip + zero-bias + bias_vl drop)", P)
