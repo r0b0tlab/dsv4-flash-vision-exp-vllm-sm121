@@ -45,6 +45,8 @@ server_cmd() {
     --speculative-algorithm "${SPEC_ALGO}"
     --speculative-dspark-block-size "${SPEC_GAMMA}"
   )
+  [[ -n "${SG_SPS_TABLE}" ]] && c+=(--speculative-dspark-sps-table-path "${SG_SPS_TABLE}")
+  [[ -n "${SG_MAX_RUNNING}" ]] && c+=(--max-running-requests "${SG_MAX_RUNNING}")
   if [[ -n "${EXTRA_ARGS}" ]]; then read -r -a extra <<< "${EXTRA_ARGS}"; c+=("${extra[@]}"); fi
   # ssh hop re-splits args at the remote shell: caller passes through ssh gets the
   # single-quoted form; local docker run gets the raw %q form.
@@ -78,6 +80,7 @@ ssh -o BatchMode=yes "${WORKER_SSH}" docker run -d --name "${NAME}" \
   "${common[@]}" \
   -e NCCL_IB_HCA=roceP2p1s0f0 -e NCCL_SOCKET_IFNAME=enP2p1s0f0np0 \
   -v "${WORKER_MODEL_DIR}:/model:ro" \
+  -v "${HOME}/sgl-extras:/sgl-extras:ro" \
   "${IMAGE}" bash -c "$(SG_REMOTE_FORM=1 server_cmd 1)"
 
 echo "== rank0 (node3) =="
@@ -85,6 +88,7 @@ docker run -d --name "${NAME}" \
   "${common[@]}" \
   -e NCCL_IB_HCA=roceP2p1s0f1 -e NCCL_SOCKET_IFNAME=enP2p1s0f1np1 \
   -v "${MODEL_DIR}:/model:ro" \
+  -v "${HOME}/sgl-extras:/sgl-extras:ro" \
   "${IMAGE}" bash -c "$(server_cmd 0)"
 
 echo "API: http://${HEAD_IP}:${PORT}/v1/models (mgmt: http://192.168.3.2:${PORT})"
