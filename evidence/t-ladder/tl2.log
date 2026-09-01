@@ -1,0 +1,63 @@
+/usr/local/lib/python3.12/dist-packages/sglang/bench_serving.py:13: FutureWarning: `sglang.bench_serving` is deprecated and will be removed in a future release; use `sglang.benchmark.serving` instead (e.g. `python -m sglang.benchmark.serving`).
+  warnings.warn(
+benchmark_args=Namespace(backend='sglang', base_url=None, host='127.0.0.1', port=30000, ready_check_timeout_sec=60, dataset_name='random-ids', dataset_path='', dataset_offset=0, agentic_max_turns=None, speed_bench_category=None, speed_bench_output_len=512, model='deepseek-v4-flash-vision-exp', served_model_name=None, tokenizer=None, num_prompts=8, sharegpt_output_len=None, sharegpt_context_len=None, random_input_len=512, random_output_len=256, random_range_ratio=0.0, image_count=1, image_resolution='1080p', random_image_count=False, image_format='jpeg', image_content='random', request_rate=inf, use_trace_timestamps=False, max_concurrency=2, output_file=None, output_details=False, print_requests=False, disable_tqdm=False, disable_stream=False, return_logprob=False, top_logprobs_num=0, token_ids_logprob=None, logprob_start_len=-1, return_routed_experts=False, cache_report=False, seed=42, disable_ignore_eos=False, temperature=0.0, top_p=1.0, extra_request_body=None, apply_chat_template=False, profile=False, plot_throughput=False, profile_activities=['CPU', 'GPU'], profile_start_step=None, profile_steps=None, profile_num_steps=None, profile_by_stage=False, profile_stages=None, profile_output_dir=None, profile_prefix=None, lora_name=None, lora_request_distribution='uniform', lora_zipf_alpha=1.5, prompt_suffix='', pd_separated=False, profile_prefill_url=None, profile_decode_url=None, flush_cache=False, flush_cache_timeout=60.0, warmup_requests=1, tokenize_prompt=False, gsp_num_groups=64, gsp_prompts_per_group=16, gsp_system_prompt_len=2048, gsp_question_len=128, gsp_output_len=256, gsp_range_ratio=1.0, gsp_fast_prepare=False, gsp_send_routing_key=False, gsp_num_turns=1, gsp_ordered=False, gsp_group_distribution='uniform', gsp_zipf_alpha=None, mooncake_slowdown_factor=1.0, mooncake_num_rounds=1, mooncake_workload='conversation', fake_prefill=False, tag=None, header=None)
+Waiting up to 60s for http://127.0.0.1:30000/v1/models to become ready...
+Server ready in 0.0s.
+Fail to load tokenizer config with error=deepseek-v4-flash-vision-exp is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'
+If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`
+
+WARNING It is recommended to use the `Chat` or `Instruct` model for benchmarking.
+Because when the tokenizer counts the output tokens, if there is gibberish, it might count incorrectly.
+
+Namespace(backend='sglang', base_url=None, host='127.0.0.1', port=30000, ready_check_timeout_sec=60, dataset_name='random-ids', dataset_path='', dataset_offset=0, agentic_max_turns=None, speed_bench_category=None, speed_bench_output_len=512, model='deepseek-v4-flash-vision-exp', served_model_name=None, tokenizer=None, num_prompts=8, sharegpt_output_len=None, sharegpt_context_len=None, random_input_len=512, random_output_len=256, random_range_ratio=0.0, image_count=1, image_resolution='1080p', random_image_count=False, image_format='jpeg', image_content='random', request_rate=inf, use_trace_timestamps=False, max_concurrency=2, output_file=None, output_details=False, print_requests=False, disable_tqdm=False, disable_stream=False, return_logprob=False, top_logprobs_num=0, token_ids_logprob=None, logprob_start_len=-1, return_routed_experts=False, cache_report=False, seed=42, disable_ignore_eos=False, temperature=0.0, top_p=1.0, extra_request_body=None, apply_chat_template=False, profile=False, plot_throughput=False, profile_activities=['CPU', 'GPU'], profile_start_step=None, profile_steps=None, profile_num_steps=None, profile_by_stage=False, profile_stages=None, profile_output_dir=None, profile_prefix=None, lora_name=None, lora_request_distribution='uniform', lora_zipf_alpha=1.5, prompt_suffix='', pd_separated=False, profile_prefill_url=None, profile_decode_url=None, flush_cache=False, flush_cache_timeout=60.0, warmup_requests=1, tokenize_prompt=False, gsp_num_groups=64, gsp_prompts_per_group=16, gsp_system_prompt_len=2048, gsp_question_len=128, gsp_output_len=256, gsp_range_ratio=1.0, gsp_fast_prepare=False, gsp_send_routing_key=False, gsp_num_turns=1, gsp_ordered=False, gsp_group_distribution='uniform', gsp_zipf_alpha=None, mooncake_slowdown_factor=1.0, mooncake_num_rounds=1, mooncake_workload='conversation', fake_prefill=False, tag=None, header=None)
+
+#Input tokens: 1548
+#Output tokens: 1134
+Starting warmup with 1 sequences...
+Warmup completed with 1 sequences. Starting main benchmark run...
+  0%|          | 0/8 [00:00<?, ?it/s] 12%|█▎        | 1/8 [00:06<00:48,  6.96s/it] 25%|██▌       | 2/8 [00:07<00:18,  3.04s/it] 38%|███▊      | 3/8 [00:12<00:21,  4.21s/it] 50%|█████     | 4/8 [00:15<00:14,  3.52s/it] 62%|██████▎   | 5/8 [00:17<00:09,  3.10s/it] 75%|███████▌  | 6/8 [00:19<00:05,  2.81s/it] 88%|████████▊ | 7/8 [00:21<00:02,  2.48s/it]100%|██████████| 8/8 [00:23<00:00,  2.37s/it]100%|██████████| 8/8 [00:23<00:00,  2.98s/it]
+
+============ Serving Benchmark Result ============
+Backend:                                 sglang    
+Traffic request rate:                    inf       
+Max request concurrency:                 2         
+Successful requests:                     8         
+Benchmark duration (s):                  23.95     
+Total input tokens:                      1548      
+Total input text tokens:                 1548      
+Total generated tokens:                  1134      
+Total generated tokens (retokenized):    1120      
+Request throughput (req/s):              0.33      
+Input token throughput (tok/s):          64.63     
+Output token throughput (tok/s):         47.34     
+Peak output token throughput (tok/s):    94.00     
+Peak concurrent requests:                3         
+Total token throughput (tok/s):          111.97    
+Concurrency:                             1.90      
+Accept length:                           2.80      
+----------------End-to-End Latency----------------
+Mean E2E Latency (ms):                   5697.96   
+Median E2E Latency (ms):                 6145.16   
+P90 E2E Latency (ms):                    8205.39   
+P95 E2E Latency (ms):                    9308.43   
+P99 E2E Latency (ms):                    10190.86  
+---------------Time to First Token----------------
+Mean TTFT (ms):                          661.89    
+Median TTFT (ms):                        471.72    
+P90 TTFT (ms):                           1140.84   
+P95 TTFT (ms):                           1450.21   
+P99 TTFT (ms):                           1697.70   
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          35.93     
+Median TPOT (ms):                        30.81     
+P90 TPOT (ms):                           50.57     
+P95 TPOT (ms):                           55.47     
+P99 TPOT (ms):                           59.40     
+---------------Inter-Token Latency----------------
+Mean ITL (ms):                           35.84     
+Median ITL (ms):                         23.71     
+P90 ITL (ms):                            94.69     
+P95 ITL (ms):                            99.13     
+P99 ITL (ms):                            109.85    
+Max ITL (ms):                            957.09    
+==================================================
