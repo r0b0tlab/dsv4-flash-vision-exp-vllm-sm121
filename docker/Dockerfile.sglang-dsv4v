@@ -1,8 +1,7 @@
-# SGLang upstream (main @ 4c2c169e) for DSV4-Flash-Vision-Exp on SM121 (GB10)
-# Base: current sglang release image (has torch 2.9+/cu13, flashinfer, sgl-kernel).
 FROM lmsysorg/sglang:latest
 
 COPY sgl-src/ /sgl-src/
 RUN pip install --no-cache-dir --no-build-isolation /sgl-src/python[dev]
-# runtime knob: allow DSV4 checkpoint routed-expert dtype detection without env set
+COPY patch_sglang_trackt.py /tmp/patch_sglang_trackt.py
+RUN python3 /tmp/patch_sglang_trackt.py
 ENV SGLANG_DSV4_FP4_EXPERTS_INFER=1
