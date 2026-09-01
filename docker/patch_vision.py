@@ -70,5 +70,29 @@ NEW_LOOP = (
 assert OLD_LOOP in text, "loop anchor not found"
 text = text.replace(OLD_LOOP, NEW_LOOP)
 
+# 4) same drop in the DSpark draft loader (dspark.py): it remaps
+#    .ffn.gate.bias -> e_score_correction_bias and would KeyError on bias_vl.
+D = pathlib.Path(
+    "/usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/dspark.py"
+)
+dtext = D.read_text()
+OLD_D = (
+    "                if name.endswith(\".ffn.gate.bias\"):\n"
+    "                    name = name.replace(\n"
+    "                        \".ffn.gate.bias\", \".ffn.gate.e_score_correction_bias\"\n"
+    "                    )\n"
+)
+NEW_D = (
+    "                if name.endswith(\".ffn.gate.bias_vl\"):\n"
+    "                    # Vision-Exp selection-only router bias: skip (text-only).\n"
+    "                    continue\n"
+    "                if name.endswith(\".ffn.gate.bias\"):\n"
+    "                    name = name.replace(\n"
+    "                        \".ffn.gate.bias\", \".ffn.gate.e_score_correction_bias\"\n"
+    "                    )\n"
+)
+assert OLD_D in dtext, "dspark anchor not found"
+D.write_text(dtext.replace(OLD_D, NEW_D))
+
 P.write_text(text)
-print("PATCHED v4 (vision-skip + zero-bias + bias_vl drop)", P)
+print("PATCHED v5 (target+draft loader bias_vl drop + zero-bias)", P)
