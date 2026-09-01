@@ -70,7 +70,8 @@ common=( --gpus all --ipc=host --network host --shm-size=64g
   -e SGLANG_USE_DEEPGEMM=1
   -e SGLANG_RAGGED_VERIFY_MODE="${SG_RAGGED:-compact}"
   -e SGLANG_DSPARK_OPT_FUSED_GREEDY_MARKOV="${SG_FUSED_MARKOV:-1}"
-  -e SGLANG_DSPARK_ENABLE_SPS_RECORD="${SG_SPS_RECORD:-0}" )
+  -e SGLANG_DSPARK_ENABLE_SPS_RECORD="${SG_SPS_RECORD:-0}"
+  -e SGLANG_SIMULATE_ACC_LEN="${SG_SIM_ACC:-}" )
 
 echo "== rank1 (node2) =="
 ssh -o BatchMode=yes "${WORKER_SSH}" docker run -d --name "${NAME}" \
