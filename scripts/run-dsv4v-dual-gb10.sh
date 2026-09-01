@@ -36,7 +36,7 @@ FLASHINFER_CACHE="${FLASHINFER_CACHE:-${HOME}/.cache/dsv4v-flashinfer}"
 
 fail() { echo "ERROR: $*" >&2; exit 1; }
 
-[[ "${KV_CACHE_DTYPE}" =~ ^(nvfp4|nvfp4_4over6)$ ]] || fail "KV_CACHE_DTYPE must be nvfp4|nvfp4_4over6 (v0.28 enum)"
+[[ "${KV_CACHE_DTYPE}" =~ ^(nvfp4|nvfp4_4over6|fp8_ds_mla)$ ]] || fail "KV_CACHE_DTYPE must be nvfp4|nvfp4_4over6|fp8_ds_mla"
 [[ "${MOE_BACKEND}" == "flashinfer_b12x" ]] || fail "MOE_BACKEND must be flashinfer_b12x"
 [[ "${ENFORCE_EAGER}" =~ ^[01]$ ]] || fail "ENFORCE_EAGER must be 0 or 1"
 [[ -d "${MODEL_DIR}" ]] || fail "model dir not found: ${MODEL_DIR}"
