@@ -1,0 +1,10 @@
+Disk prep 2026-08-31 (all deletions user-authorized)
+node3: rm -rf ~/models/Ornith-1.0-397B-FP8 (391G) + ~/models/Ornith-1.0-397B-NVFP4 (221G)
+  before: /dev/nvme0n1p2 3.7T 3.4T 96G 98%
+  after:  /dev/nvme0n1p2 3.7T 2.8T 707G 81%
+head:   Ornith-1.0-397B sweep — none found (clean)
+node2:  Ornith-1.0-397B sweep — none found (clean)
+node2: rm -rf ~/qwen38-flash-next-w4a16/source (BF16 Qwen3.8-Flash-Next base, 336G, Qwen4ExpForConditionalGeneration, no quant config, 131 shards)
+  before: /dev/nvme0n1p2 3.7T 3.3T 284G 93%
+  after:  /dev/nvme0n1p2 3.7T 2.9T 619G 83%
+PROTECTED (verified intact post-delete): node2 candidate/ 126G, builds/ 12G; qwen38-live catalog lock untouched
