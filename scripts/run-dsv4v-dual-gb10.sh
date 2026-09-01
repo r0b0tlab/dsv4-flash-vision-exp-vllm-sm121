@@ -100,32 +100,35 @@ common_args=(
 )
 
 serve_cmd() {
-  local rank="$1" headless="$2" eth_if="$3" hca="$4"
-  cat <<EOF
-exec vllm serve /model \
-  --served-model-name "${SERVED_MODEL_NAME}" \
-  --host 0.0.0.0 --port "${PORT}" \
-  --trust-remote-code \
-  --tensor-parallel-size 2 --pipeline-parallel-size 1 \
-  --kv-cache-dtype "${KV_CACHE_DTYPE}" \
-  --block-size 256 \
-  --max-model-len "${MAX_MODEL_LEN}" \
-  --max-num-seqs "${MAX_NUM_SEQS}" \
-  --max-num-batched-tokens "${MAX_NUM_BATCHED_TOKENS}" \
-  --gpu-memory-utilization "${GPU_MEMORY_UTILIZATION}" \
-  ${KV_BYTES_ARG[*]} \
-  --enable-prefix-caching \
-  --speculative-config '{"method":"dspark","num_speculative_tokens":${SPEC_TOKENS},"draft_sample_method":"greedy"}' \
-  --tokenizer-mode deepseek_v4 \
-  --tool-call-parser deepseek_v4 --enable-auto-tool-choice \
-  --reasoning-parser deepseek_v4 \
-  --default-chat-template-kwargs '{"thinking":true}' \
-  --compilation-config '${COMPILATION_CONFIG_JSON}' \
-  --moe-backend "${MOE_BACKEND}" \
-  ${EAGER_ARG[*]} \
-  --distributed-executor-backend mp \
-  --nnodes 2 --node-rank "${rank}" --master-addr "${HEAD_IP}" --master-port "${MASTER_PORT}" ${headless}
-EOF
+  local rank="$1" headless="$2"
+  local -a c=(
+    exec vllm serve /model
+    --served-model-name "${SERVED_MODEL_NAME}"
+    --host 0.0.0.0 --port "${PORT}"
+    --trust-remote-code
+    --tensor-parallel-size 2 --pipeline-parallel-size 1
+    --kv-cache-dtype "${KV_CACHE_DTYPE}"
+    --block-size 256
+    --max-model-len "${MAX_MODEL_LEN}"
+    --max-num-seqs "${MAX_NUM_SEQS}"
+    --max-num-batched-tokens "${MAX_NUM_BATCHED_TOKENS}"
+    --gpu-memory-utilization "${GPU_MEMORY_UTILIZATION}"
+    --enable-prefix-caching
+    --speculative-config '{"method":"dspark","num_speculative_tokens":'"${SPEC_TOKENS}"',"draft_sample_method":"greedy"}'
+    --tokenizer-mode deepseek_v4
+    --tool-call-parser deepseek_v4 --enable-auto-tool-choice
+    --reasoning-parser deepseek_v4
+    --default-chat-template-kwargs '{"thinking":true}'
+    --compilation-config "${COMPILATION_CONFIG_JSON}"
+    --moe-backend "${MOE_BACKEND}"
+    --distributed-executor-backend mp
+    --nnodes 2 --node-rank "${rank}"
+    --master-addr "${HEAD_IP}" --master-port "${MASTER_PORT}"
+  )
+  [[ -n "${KV_CACHE_MEMORY_BYTES}" ]] && c+=(--kv-cache-memory-bytes "${KV_CACHE_MEMORY_BYTES}")
+  [[ "${ENFORCE_EAGER}" == "1" ]] && c+=(--enforce-eager)
+  [[ -n "${headless}" ]] && c+=(--headless)
+  printf '%q ' "${c[@]}"
 }
 
 echo "== image identity: ${RUNTIME_IMAGE_REF} (both ranks)"
@@ -143,7 +146,7 @@ ssh -o BatchMode=yes "${WORKER_SSH}" docker run -d --name "${NAME}" \
   -e NODE_RANK=1 \
   -e NCCL_IB_HCA="${RANK1_HCA}" \
   -e NCCL_SOCKET_IFNAME="${RANK1_ETH_IF}" \
-  "${RUNTIME_IMAGE_REF}" -lc "$(printf '%q' "$(serve_cmd 1 --headless "${RANK1_ETH_IF}" "${RANK1_HCA}")")"
+  "${RUNTIME_IMAGE_REF}" -lc "$(serve_cmd 1 x "${RANK1_ETH_IF}" "${RANK1_HCA}")"
 
 echo "== starting rank0 head (this node, ${HEAD_IP}) =="
 docker run -d --name "${NAME}" \
@@ -153,7 +156,7 @@ docker run -d --name "${NAME}" \
   -e NODE_RANK=0 \
   -e NCCL_IB_HCA="${RANK0_HCA}" \
   -e NCCL_SOCKET_IFNAME="${RANK0_ETH_IF}" \
-  "${RUNTIME_IMAGE_REF}" -lc "$(printf '%q' "$(serve_cmd 0 '' "${RANK0_ETH_IF}" "${RANK0_HCA}")")"
+  "${RUNTIME_IMAGE_REF}" -lc "$(serve_cmd 0 '' "${RANK0_ETH_IF}" "${RANK0_HCA}")"
 
 echo "API: http://${HEAD_IP}:${PORT}/v1/models  (also via mgmt: http://192.168.3.2:${PORT})"
 echo "Logs: docker logs -f ${NAME} (node3/rank0) ; ssh ${WORKER_SSH} docker logs -f ${NAME} (node2/rank1)"
