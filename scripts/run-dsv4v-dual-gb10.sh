@@ -8,8 +8,8 @@ NAME="${NAME:-dsv4v_vllm}"
 MODEL_DIR="${DSV4V_MODEL_DIR:-${HOME}/models/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp}"
 WORKER_MODEL_DIR="${DSV4V_WORKER_MODEL_DIR:-${MODEL_DIR}}"
 SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-deepseek-v4-flash-vision-exp}"
-WORKER_SSH="${WORKER_SSH:-192.168.5.2}"          # node3, from node2 over the direct lane
-HEAD_IP="${HEAD_IP:-192.168.5.1}"                # node2 lane addr — rank0 rendezvous
+WORKER_SSH="${WORKER_SSH:-r0b0tdgx@192.168.5.1}"  # node2, from node3 over the direct lane
+HEAD_IP="${HEAD_IP:-192.168.5.2}"                # node3 lane addr — rank0 rendezvous
 MASTER_PORT="${MASTER_PORT:-25000}"
 PORT="${PORT:-8000}"
 MAX_MODEL_LEN="${MAX_MODEL_LEN:-327680}"
@@ -25,9 +25,12 @@ ENFORCE_EAGER="${ENFORCE_EAGER:-0}"
 # If the v026 knownfix selector port lands, override with:
 #   COMPILATION_CONFIG_JSON='{"cudagraph_implementation":"regular","cudagraph_strict":true}'
 COMPILATION_CONFIG_JSON="${COMPILATION_CONFIG_JSON:-{\"cudagraph_mode\":\"FULL\"}}"
-# lane interfaces (verified 2026-08-31): both ranks reach each other via P2p1s0f0 (192.168.5.x)
-LANE_HCA="${LANE_HCA:-roceP2p1s0f0}"
-LANE_ETH_IF="${LANE_ETH_IF:-enP2p1s0f0np0}"
+# lane interfaces (verified 2026-08-31): per-rank — on node2 the 5.x lane is P2p1s0f0,
+# on node3 it is P2p1s0f1. rank0 = the node this script runs on.
+RANK0_ETH_IF="${RANK0_ETH_IF:-enP2p1s0f1np1}"
+RANK0_HCA="${RANK0_HCA:-roceP2p1s0f1}"
+RANK1_ETH_IF="${RANK1_ETH_IF:-enP2p1s0f0np0}"
+RANK1_HCA="${RANK1_HCA:-roceP2p1s0f0}"
 NCCL_IB_GID_INDEX="${NCCL_IB_GID_INDEX:-3}"
 FLASHINFER_CACHE="${FLASHINFER_CACHE:-${HOME}/.cache/dsv4v-flashinfer}"
 
@@ -87,8 +90,6 @@ common_args=(
   -e DG_JIT_USE_NVRTC=0 -e DG_JIT_NVCC_COMPILER=/usr/local/cuda/bin/nvcc
   -e PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
   -e NCCL_NET=IB -e NCCL_IB_DISABLE=0
-  -e NCCL_IB_HCA="${LANE_HCA}"
-  -e NCCL_SOCKET_IFNAME="${LANE_ETH_IF}"
   -e NCCL_IB_GID_INDEX="${NCCL_IB_GID_INDEX}"
   -e NCCL_CUMEM_ENABLE=0 -e NCCL_IGNORE_CPU_AFFINITY=1
   -e NCCL_DEBUG="${NCCL_DEBUG:-INFO}"
@@ -98,7 +99,7 @@ common_args=(
 )
 
 serve_cmd() {
-  local rank="$1" headless="$2"
+  local rank="$1" headless="$2" eth_if="$3" hca="$4"
   cat <<EOF
 exec vllm serve /model \
   --served-model-name "${SERVED_MODEL_NAME}" \
@@ -138,14 +139,20 @@ ssh -o BatchMode=yes "${WORKER_SSH}" docker run -d --name "${NAME}" \
   "${common_args[@]}" \
   -v "${WORKER_MODEL_DIR}:/model:ro" \
   -v "${FLASHINFER_CACHE}:/cache/flashinfer-workspace" \
-  "${RUNTIME_IMAGE_REF}" bash -lc "$(printf '%q' "$(serve_cmd 1 --headless)")"
+  -e NODE_RANK=1 \
+  -e NCCL_IB_HCA="${RANK1_HCA}" \
+  -e NCCL_SOCKET_IFNAME="${RANK1_ETH_IF}" \
+  "${RUNTIME_IMAGE_REF}" bash -lc "$(printf '%q' "$(serve_cmd 1 --headless "${RANK1_ETH_IF}" "${RANK1_HCA}")")"
 
 echo "== starting rank0 head (this node, ${HEAD_IP}) =="
 docker run -d --name "${NAME}" \
   "${common_args[@]}" \
   -v "${MODEL_DIR}:/model:ro" \
   -v "${FLASHINFER_CACHE}:/cache/flashinfer-workspace" \
-  "${RUNTIME_IMAGE_REF}" bash -lc "$(printf '%q' "$(serve_cmd 0 '')")"
+  -e NODE_RANK=0 \
+  -e NCCL_IB_HCA="${RANK0_HCA}" \
+  -e NCCL_SOCKET_IFNAME="${RANK0_ETH_IF}" \
+  "${RUNTIME_IMAGE_REF}" bash -lc "$(printf '%q' "$(serve_cmd 0 '' "${RANK0_ETH_IF}" "${RANK0_HCA}")")"
 
-echo "API: http://${HEAD_IP}:${PORT}/v1/models"
-echo "Logs: docker logs -f ${NAME} (node2) ; ssh ${WORKER_SSH} docker logs -f ${NAME} (node3)"
+echo "API: http://${HEAD_IP}:${PORT}/v1/models  (also via mgmt: http://192.168.3.2:${PORT})"
+echo "Logs: docker logs -f ${NAME} (node3/rank0) ; ssh ${WORKER_SSH} docker logs -f ${NAME} (node2/rank1)"
