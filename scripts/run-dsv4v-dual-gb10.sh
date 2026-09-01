@@ -76,6 +76,7 @@ RUNTIME_IMAGE_REF="${LOCAL_IMAGE_ID}"
 
 common_args=(
   --gpus all --ipc=host --network host
+  --entrypoint /bin/bash
   --shm-size=64g
   --ulimit memlock=-1:-1 --ulimit stack=67108864:-1
   --cap-add=IPC_LOCK --device=/dev/infiniband
