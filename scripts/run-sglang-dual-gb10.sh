@@ -46,7 +46,9 @@ server_cmd() {
     --speculative-dspark-block-size "${SPEC_GAMMA}"
   )
   if [[ -n "${EXTRA_ARGS}" ]]; then read -r -a extra <<< "${EXTRA_ARGS}"; c+=("${extra[@]}"); fi
-  printf '%q ' "${c[@]}"
+  local joined
+  joined="$(printf '%q ' "${c[@]}")"
+  printf "'%s'" "${joined}"
 }
 
 docker rm -f "${NAME}" 2>/dev/null || true
