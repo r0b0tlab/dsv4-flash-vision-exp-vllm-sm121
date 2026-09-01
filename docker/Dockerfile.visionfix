@@ -1,4 +1,8 @@
 FROM vllm/vllm-openai:v0.28.0
 COPY patch_vision.py /tmp/patch_vision.py
 RUN python3 /tmp/patch_vision.py
-RUN pip install --no-cache-dir flashinfer-python==0.6.18
+RUN pip install --no-cache-dir flashinfer-python==0.6.18 \
+    flashinfer-cubin==0.6.18 --index-url https://flashinfer.ai/whl \
+    --extra-index-url https://pypi.org/simple
+RUN pip install --no-cache-dir flashinfer-jit-cache==0.6.18 \
+    --index-url https://flashinfer.ai/whl/cu130
