@@ -1,0 +1,7 @@
+AR (no spec) vs DSpark K=3 probabilistic, thinking=high, vision PASS
+  SHORT c1 warm AR 25.13  TTFT 336ms  TPOT 38.63
+  SHORT c1 DSpark-prob 29.98  TPOT 31.51  accept 2.10
+  Spec pays +19% vs AR. Not enough for 43.61.
+
+Greedy K=3 did not win c1 (29.84 vs 29.98) — skip greedy K=5.
+Restore DSpark K=3 probabilistic (best c1).

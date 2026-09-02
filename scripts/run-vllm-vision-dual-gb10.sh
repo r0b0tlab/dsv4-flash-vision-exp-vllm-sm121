@@ -57,7 +57,11 @@ serve_cmd() {
     --max-num-seqs "${MAX_NUM_SEQS}"
     --max-num-batched-tokens "${MAX_NUM_BATCHED_TOKENS}"
     --gpu-memory-utilization "${GPU_MEMORY_UTILIZATION}"
-    --speculative-config "${spec}"
+  )
+  if [[ "${SPEC_TOKENS}" != "0" && "${SPEC_METHOD}" != "none" && "${SPEC_METHOD}" != "off" ]]; then
+    c+=(--speculative-config "${spec}")
+  fi
+  c+=(
     --tokenizer-mode deepseek_v4
     --tool-call-parser deepseek_v4 --enable-auto-tool-choice
     --reasoning-parser deepseek_v4

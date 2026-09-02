@@ -1,0 +1,6 @@
+K=3 greedy vs K=3 probabilistic (thinking=high, fi512b, vision PASS)
+  SHORT c1 warm: greedy 29.84  TTFT 402  TPOT 32.06  accept 2.09  pos 81.4/19.8/7.8
+                 prob    29.98  TTFT 503  TPOT 31.51  accept 2.10
+  SHORT c4: greedy 58.12 vs prob 30.09 (c4 only; c1 is the gate)
+  Verdict: greedy does NOT win c1. Skip greedy K=5.
+  c4 greedy almost hits 60.73 floor but does not unlock K=5.
