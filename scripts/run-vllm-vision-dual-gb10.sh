@@ -35,6 +35,7 @@ FLASHINFER_CACHE="${FLASHINFER_CACHE:-${HOME}/.cache/dsv4v-flashinfer}"
 MEDIA_DIR="${MEDIA_DIR:-${HOME}/sgl-rw/media}"
 SPEC_METHOD="${SPEC_METHOD:-probabilistic}"
 SPEC_ADAPTIVE="${SPEC_ADAPTIVE:-true}"
+ENABLE_PREFIX_CACHE="${ENABLE_PREFIX_CACHE:-1}"
 
 fail() { echo "ERROR: $*" >&2; exit 1; }
 
@@ -70,6 +71,7 @@ serve_cmd() {
   [[ "${ENFORCE_EAGER}" == "1" ]] && c+=(--enforce-eager)
   [[ "${ENABLE_EP}" == "1" ]] && c+=(--enable-expert-parallel)
   [[ "${FP4_INDEXER}" == "1" ]] && c+=(--attention_config.use_fp4_indexer_cache True)
+  [[ "${ENABLE_PREFIX_CACHE}" == "0" ]] && c+=(--no-enable-prefix-caching)
   [[ -n "${headless}" ]] && c+=(--headless)
   printf '%q ' "${c[@]}"
 }
