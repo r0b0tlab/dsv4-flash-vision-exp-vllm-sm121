@@ -1,5 +1,20 @@
 # Track T result — SGLang dual-GB10 TP=2, packaged DSpark — 2026-09-01
 
+## UPDATE 2026-09-01 (t-opt closeout): throughput optimization campaign complete.
+
+Final optimized profile (ADOPTED, gates 5/5, evidence `evidence/t-opt/`):
+`SGLANG_RAGGED_VERIFY_MODE=compact` + `SGLANG_DSPARK_OPT_FUSED_GREEDY_MARKOV=1`, γ=5.
+Ladder: c1 **38.51** / c2 **56.04** / c4 60.25 (official R0 cell 65.40) / c8 83–98
+(variance band; official R0 warm cell 98.03) vs base 34.82/47.34/58.06/88.53.
+Prose lane (~500-word explanations): c1 32.5 / c4 63.5 / c8 83.6 tok/s agg; accept mean 2.64.
+
+Measured and REJECTED: SPS table (−11..−19%), align-verify-to-graph-tier (−12..−17%),
+γ=4 (structurally blocked: γ resolved from draft checkpoint config, `compute_confidence`
+shape crash — `evidence/t-opt/R3a/crash-traceback.txt`). Remaining gap attributed to
+shallow draft acceptance (~2.6/6 on prose AND random traffic, only 2% steps ≥4) — a
+weights-level property, not a serving-config property. Full writeup:
+`evidence/t-opt/FINAL/VERDICT.md`.
+
 ## Verdict: 80–100 tok/s TARGET MET at c8 — and every rung beats the vLLM v0.28 lane 2.8–3.4×
 
 Stack: upstream SGLang `4c2c169e` (image `sglang-dsv4v:0.5.19-vision` = `86466ee96176…`, both ranks parity PASS),

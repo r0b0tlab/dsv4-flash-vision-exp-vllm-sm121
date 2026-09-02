@@ -48,8 +48,4 @@ Accept len from rank-0 decode log during think traffic: ~2.4–3.8 (typical ~2.6
 
 ## NIAH 1M
 
-In flight: `python3 scripts/run-niah-advertised.py --base-url http://192.168.3.2:30000 --target-tokens 1048512` → `evidence/full-ctx-opt/R0/niah-1m.json`. Full-context concurrency ladder deferred until NIAH PASS (same 1M prefill cost).
-
-## Next
-
-R1 STS collect on this admitted 1M server (needs restart with collect env). Do not start R1 until NIAH 1M single+multikey complete.
+**CANCELLED.** Client killed at `START 25%`. Scheduler kept the 1M prefill; both ranks lost SSH (ICMP + `/v1/models` lived). Cluster reboot. Do not rerun NIAH until STS/R3 levers are measured. See `evidence/full-ctx-opt/HANDOFF.md`.

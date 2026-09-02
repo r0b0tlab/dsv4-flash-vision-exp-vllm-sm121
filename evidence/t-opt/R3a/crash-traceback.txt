@@ -1,0 +1,12 @@
+  File "/usr/local/lib/python3.12/dist-packages/sglang/srt/speculative/dspark_components/dspark_planner.py", line 267, in compute_confidence_tensor
+    return compute_confidence_hook(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/sglang/srt/models/deepseek_v4_dspark.py", line 898, in compute_confidence
+    x_post_hc = x_post_hc.view(bs, self.gamma, -1)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: shape '[256, 5, -1]' is invalid for input of size 4194304
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/sglang/srt/managers/scheduler.py", line 5584, in run_scheduler_process

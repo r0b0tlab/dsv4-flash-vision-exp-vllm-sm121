@@ -1,0 +1,5 @@
+== prose lane (final stack, 2026-09-01) ==
+c1x2: agg 32.54 tok/s, per-stream ~32.3-32.8, ~625 tokens/req
+c4x1: agg 63.50, per-stream 15.6-18.2, ~600 tokens/req
+c8x1: agg 83.62, per-stream 11.0-12.5, ~615 tokens/req
+accept mean 2.64 (n=54 log lines)
