@@ -1,0 +1,7 @@
+opt relaunch after audit (FDO capture 1-8, FlashInfer autotune ON + skip-ops, util 0.875, fi512b)
+vision PASS
+SHORT c1 warm 31.01  TTFT 361  TPOT 30.96  accept 2.09   vs prior 29.98
+SHORT c4 warm 48.12  TTFT 659  TPOT 78.68  accept 2.13   vs prior 30.09 (first c4 22.38 was cold)
+KV 731k / 2.79x @262k
+autotune: cache 0.6.18/121a + "Running FlashInfer autotune with 8192 tokens"
+still short of 43.61 / 60.73

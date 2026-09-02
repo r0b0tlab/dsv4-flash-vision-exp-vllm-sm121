@@ -1,0 +1,24 @@
+Live audit 2026-09-02 before opt relaunch (dsv4v_vllm Up, fi512b c4c0d7b2)
+
+ALIGNED
+  K=3 probabilistic, adaptive=false (IndexerBackend rejects true)
+  thinking=high, tokenizer/tool/reasoning deepseek_v4
+  kv fp8 block 256, DeepGEMM MXFP4 + PDL + E8M0, not Marlin
+  graphs on (engine FDO), prefix cache on, chunked prefill 8192
+  TP=2 RoCE PYNCCL, no b12x, no FP4 indexer
+
+MISSED / FIXED THIS RELAUNCH
+  --no-enable-flashinfer-autotune wholesale while SKIP_OPS already set
+    recipe: skip only trtllm_fp4_block_scale_moe
+  requested cudagraph FULL + capture 1..64 with max_num_seqs=8
+    now FDO + [1,2,4,8]
+  launcher default image vision-54631 (sparse-MLA page_block crash)
+    now fi512b
+  util 0.86 leftover from restore (recipe-class 0.875; 0.95 OOM on 128G)
+
+NOT APPLIED (tradeoff / already rejected)
+  max-model-len 262144 vs recipe 32768 — indexer tax; keep 262k until SHORT A/B
+  EP off vs official TEP — memory risk on 2x128G, A/B separately
+  max-num-seqs 8 vs 256 — 256 is aggregate not c1
+  adaptive verification — backend reject
+  PIECEWISE / compile-on — eidx / lossless policy

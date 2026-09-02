@@ -4,7 +4,7 @@
 # SG_DRYRUN=1 prints both docker commands and exits 0.
 set -euo pipefail
 
-IMAGE="${DSV4V_IMAGE:-dsv4v-vllm:vision-54631}"
+IMAGE="${DSV4V_IMAGE:-dsv4v-vllm:vision-54631-fi512b}"
 NAME="${NAME:-dsv4v_vllm}"
 MODEL_DIR="${DSV4V_MODEL_DIR:-${HOME}/models/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp}"
 WORKER_MODEL_DIR="${DSV4V_WORKER_MODEL_DIR:-${MODEL_DIR}}"
@@ -23,9 +23,12 @@ ENFORCE_EAGER="${ENFORCE_EAGER:-0}"
 ENABLE_EP="${ENABLE_EP:-0}"
 FP4_INDEXER="${FP4_INDEXER:-0}"
 # Do not put `}` inside ${var:-default} — bash ends the expansion at the first `}`.
+# FDO is what DeepseekV4FlashInferMLASparseBackend actually admits.
+# Pin capture to max_num_seqs so we do not pay 16..64 buckets.
 if [[ -z "${COMPILATION_CONFIG_JSON:-}" ]]; then
-  COMPILATION_CONFIG_JSON='{"cudagraph_mode":"FULL"}'
+  COMPILATION_CONFIG_JSON='{"mode":0,"cudagraph_mode":"FULL_DECODE_ONLY","cudagraph_capture_sizes":[1,2,4,8]}'
 fi
+FI_AUTOTUNE="${FI_AUTOTUNE:-1}"
 RANK0_ETH_IF="${RANK0_ETH_IF:-enP2p1s0f1np1}"
 RANK0_HCA="${RANK0_HCA:-roceP2p1s0f1}"
 RANK1_ETH_IF="${RANK1_ETH_IF:-enP2p1s0f0np0}"
@@ -71,8 +74,8 @@ serve_cmd() {
     --nnodes 2 --node-rank "${rank}"
     --master-addr "${HEAD_IP}" --master-port "${MASTER_PORT}"
     --allowed-local-media-path /media
-    --no-enable-flashinfer-autotune
   )
+  [[ "${FI_AUTOTUNE}" == "0" ]] && c+=(--no-enable-flashinfer-autotune)
   [[ "${ENFORCE_EAGER}" == "1" ]] && c+=(--enforce-eager)
   [[ "${ENABLE_EP}" == "1" ]] && c+=(--enable-expert-parallel)
   [[ "${FP4_INDEXER}" == "1" ]] && c+=(--attention_config.use_fp4_indexer_cache True)
