@@ -1,0 +1,3 @@
+FROM dsv4v-vllm:vision-54631
+COPY overlay-fi512/flashinfer/data/csrc/sparse_mla_sm120_prefill.cu /usr/local/lib/python3.12/dist-packages/flashinfer/data/csrc/sparse_mla_sm120_prefill.cu
+RUN grep -q "topk == 512" /usr/local/lib/python3.12/dist-packages/flashinfer/data/csrc/sparse_mla_sm120_prefill.cu

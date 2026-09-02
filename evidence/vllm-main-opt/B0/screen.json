@@ -1,0 +1,74 @@
+{
+  "latency": {
+    "n": 5,
+    "e2e_tok_s_p50": 29.759928359675953,
+    "rows": [
+      {
+        "dt": 5.636367559432983,
+        "completion_tokens": 76,
+        "e2e_tok_s": 13.483861582590894,
+        "finish": "stop",
+        "prompt_tokens": 20
+      },
+      {
+        "dt": 2.8327362537384033,
+        "completion_tokens": 76,
+        "e2e_tok_s": 26.829183232184675,
+        "finish": "stop",
+        "prompt_tokens": 20
+      },
+      {
+        "dt": 2.553769588470459,
+        "completion_tokens": 76,
+        "e2e_tok_s": 29.759928359675953,
+        "finish": "stop",
+        "prompt_tokens": 20
+      },
+      {
+        "dt": 2.4764904975891113,
+        "completion_tokens": 76,
+        "e2e_tok_s": 30.688589386467168,
+        "finish": "stop",
+        "prompt_tokens": 20
+      },
+      {
+        "dt": 2.6112635135650635,
+        "completion_tokens": 76,
+        "e2e_tok_s": 29.104684228609297,
+        "finish": "stop",
+        "prompt_tokens": 20
+      }
+    ]
+  },
+  "concurrency": [
+    {
+      "concurrency": 1,
+      "wall_s": 4.52,
+      "agg_tok_s": 56.6,
+      "per_stream_p50": 56.61631756124733,
+      "ok": true
+    },
+    {
+      "concurrency": 2,
+      "wall_s": 5.16,
+      "agg_tok_s": 99.27,
+      "per_stream_p50": 49.65548996895971,
+      "ok": true
+    },
+    {
+      "concurrency": 4,
+      "wall_s": 26.49,
+      "agg_tok_s": 38.65,
+      "per_stream_p50": 9.662945819992443,
+      "ok": true
+    },
+    {
+      "concurrency": 8,
+      "wall_s": 12.06,
+      "agg_tok_s": 169.83,
+      "per_stream_p50": 21.23633376385816,
+      "ok": true
+    }
+  ],
+  "image": "dsv4v-vllm:vision-54631-fi512b"
+}

@@ -1,0 +1,13 @@
+{
+  "ok": true,
+  "dt": 29.52,
+  "content": "LEFT=red; RIGHT=blue",
+  "usage": {
+    "prompt_tokens": 135,
+    "total_tokens": 143,
+    "completion_tokens": 8,
+    "reasoning_tokens": 0
+  },
+  "image_tokens_est": 107,
+  "note": "96x64 red-left/blue-right PNG; thinking off; FlashInfer dual-cache topk=512 prefill after JIT rebuild of sparse_mla_sm120"
+}

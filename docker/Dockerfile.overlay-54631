@@ -1,0 +1,12 @@
+# Surgical PR #54631 overlay on the official vision image
+# (streaming loader + DSpark n_predict from dspark_block_size).
+# Context = this docker/ directory. Build ON node3 (arm64).
+FROM vllm/vllm-openai:deepseekv4-flash-vision-arm64-cu130
+LABEL org.opencontainers.image.source="https://github.com/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121" \
+      vllm.image.base="vllm/vllm-openai:deepseekv4-flash-vision-arm64-cu130" \
+      vllm.pr.54631="surgical-on-0.28.1rc1.dev137+g5ab628dd1"
+USER root
+COPY overlay-54631-image/vllm/config/speculative.py /usr/local/lib/python3.12/dist-packages/vllm/config/speculative.py
+COPY overlay-54631-image/vllm/models/deepseek_v4/nvidia/model.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/model.py
+COPY overlay-54631-image/vllm/models/deepseek_v4/nvidia/vl_model.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/vl_model.py
+RUN python3 -c "import vllm, pathlib; p=pathlib.Path('/usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/vl_model.py').read_text(); assert 'sorted(' not in p, p[p.find('def load_weights'):p.find('def load_weights')+400]; assert '_normalize_deepseek_v4_dspark_hf_config' in pathlib.Path('/usr/local/lib/python3.12/dist-packages/vllm/config/speculative.py').read_text(); print('overlay_ok', vllm.__version__)"
