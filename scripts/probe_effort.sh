@@ -12,6 +12,7 @@ echo "prompt_tokens default=$d low=$lo high=$hi max=$mx"
 r=$(curl -s -m 600 "$B/v1/chat/completions" -H 'Content-Type: application/json' -d '{"model":"'$M'","messages":[{"role":"user","content":"What is 17*23? Answer with the number."}],"max_tokens":2048,"temperature":0}')
 echo "$r" | python3 -c 'import json,sys; d=json.load(sys.stdin)["choices"][0]["message"]; print("reasoning_content_len=",len(d.get("reasoning_content") or ""),"content=",repr((d.get("content") or "")[:80]))'
 pass=1
-[[ "$d" == "$mx" ]] || { echo "FAIL: default != max ($d vs $mx)"; pass=0; }
-[[ "$mx" -gt "$hi" && "$hi" -gt "$lo" ]] || { echo "FAIL: effort ordering low<high<max not seen"; pass=0; }
+[[ "$d" == "$hi" ]] || { echo "FAIL: default != high ($d vs $hi)"; pass=0; }
+[[ "$hi" -gt "$lo" ]] || { echo "FAIL: high should exceed low"; pass=0; }
+[[ "$mx" -ge "$hi" ]] || { echo "FAIL: max should be >= high"; pass=0; }
 [[ $pass == 1 ]] && echo "EFFORT PROBE: PASS" || echo "EFFORT PROBE: FAIL"

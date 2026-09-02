@@ -1,0 +1,8 @@
+lmsysorg/sglang:dev-dsv4-flash-vision
+Id=sha256:3b51556dfc4122a447fe60e18e6a919a9428ed3263d82e1ca04f0972a1a93b0a
+Digest=sha256:7ac467a50508b7029a23e846c150998fdd26d95c1cfd377ea7e74e28374486a6
+Arch=arm64 Size=32.8GB
+has deepseek_v4_vit.py deepseek_v4_vl.py (no skip-list)
+pulled node3 2026-09-02
+SG_REASONING_EFFORT=high
+preempted vLLM: dsv4v_vllm image sha256:c4c0d7b269b2… port 8000 reasoning=max 262k

@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# SGLang DSV4-Flash-Vision-Exp dual-GB10 TP=2 — full-context / max-thinking profile (v2)
+# SGLang DSV4-Flash-Vision-Exp dual-GB10 TP=2 — vision-capable + reasoning=high (v3)
 # rank0 = node3 (192.168.5.2), rank1 = node2 (192.168.5.1). Run ON node3.
 # SG_DRYRUN=1 prints the two docker commands and exits 0 (used by tests).
+# Do NOT apply patch_sglang_trackt.py (skip-list) on the vision image.
 set -euo pipefail
 
-IMAGE="${SG_IMAGE:-sglang-dsv4v:0.5.19-vision}"
+IMAGE="${SG_IMAGE:-lmsysorg/sglang:dev-dsv4-flash-vision}"
 NAME="${NAME:-sglang_dsv4v}"
 MODEL_DIR="${SG_MODEL_DIR:-${HOME}/models/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp}"
 WORKER_MODEL_DIR="${SG_WORKER_MODEL_DIR:-${MODEL_DIR}}"
@@ -25,7 +26,7 @@ SG_WATCHDOG="${SG_WATCHDOG:-1800}"
 SG_REASONING_PARSER="${SG_REASONING_PARSER:-deepseek-v4}"
 SG_TOOL_PARSER="${SG_TOOL_PARSER:-deepseekv4}"
 SG_DEFAULT_THINKING="${SG_DEFAULT_THINKING:-1}"
-SG_REASONING_EFFORT="${SG_REASONING_EFFORT:-max}"
+SG_REASONING_EFFORT="${SG_REASONING_EFFORT:-high}"
 SG_RAGGED="${SG_RAGGED:-compact}"
 SG_FUSED_MARKOV="${SG_FUSED_MARKOV:-1}"
 SG_STS_TABLE="${SG_STS_TABLE:-}"
@@ -76,6 +77,7 @@ common=( --gpus all --ipc=host --network host --shm-size=64g
   -e FLASHINFER_DISABLE_VERSION_CHECK=1
   -e NCCL_IB_GID_INDEX="${NCCL_GID}"
   -e SGLANG_USE_DEEPGEMM=1
+  -e PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
   -e SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1
   -e SGLANG_RAGGED_VERIFY_MODE="${SG_RAGGED}"
   -e SGLANG_DSPARK_OPT_FUSED_GREEDY_MARKOV="${SG_FUSED_MARKOV}"

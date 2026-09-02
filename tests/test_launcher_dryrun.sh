@@ -6,7 +6,8 @@ out="$(SG_DRYRUN=1 SG_STS_TABLE=/sgl-extras/sts.json SG_TOPK_BACKEND=flashinfer 
 for needle in \
   "--context-length 1048576" "--max-running-requests 8" "--cuda-graph-bs 1 2 3 4 6 8" \
   "--reasoning-parser deepseek-v4" "--tool-call-parser deepseekv4" "--watchdog-timeout 1800" \
-  "SGLANG_DEFAULT_THINKING=1" "SGLANG_DSV4_REASONING_EFFORT=max" "SGLANG_RAGGED_VERIFY_MODE=compact" \
+  "SGLANG_DEFAULT_THINKING=1" "SGLANG_DSV4_REASONING_EFFORT=high" "SGLANG_RAGGED_VERIFY_MODE=compact" \
+  "expandable_segments:True" "lmsysorg/sglang:dev-dsv4-flash-vision" \
   "--speculative-dspark-confidence-sts-path /sgl-extras/sts.json" "--dsa-topk-backend flashinfer" \
   "--speculative-dsa-topk-backend flashinfer" "--enable-tf32-matmul" "--enable-mixed-chunk" \
   "--enable-deepseek-v4-fp4-indexer" "SGLANG_DSV4_COMPRESS_STATE_DTYPE=bf16" "--node-rank 1" "--node-rank 0"; do
