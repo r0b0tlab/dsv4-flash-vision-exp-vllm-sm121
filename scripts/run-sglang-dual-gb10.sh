@@ -56,11 +56,17 @@ server_cmd() {
     --watchdog-timeout "${SG_WATCHDOG}"
     --reasoning-parser "${SG_REASONING_PARSER}" --tool-call-parser "${SG_TOOL_PARSER}"
     --host 0.0.0.0 --port "${PORT}"
-    --speculative-algorithm "${SPEC_ALGO}"
   )
-  # shellcheck disable=SC2206
-  local -a bs=( ${SG_GRAPH_BS} )
-  c+=(--cuda-graph-bs "${bs[@]}")
+  if [[ -n "${SPEC_ALGO}" && "${SPEC_ALGO}" != "none" && "${SPEC_ALGO}" != "off" ]]; then
+    c+=(--speculative-algorithm "${SPEC_ALGO}")
+  fi
+  if [[ "${SG_DISABLE_GRAPH:-0}" == "1" ]]; then
+    c+=(--disable-cuda-graph)
+  else
+    # shellcheck disable=SC2206
+    local -a bs=( ${SG_GRAPH_BS} )
+    c+=(--cuda-graph-bs "${bs[@]}")
+  fi
   [[ -n "${SG_STS_TABLE}" ]]   && c+=(--speculative-dspark-confidence-sts-path "${SG_STS_TABLE}")
   [[ -n "${SG_TOPK_BACKEND}" ]] && c+=(--dsa-topk-backend "${SG_TOPK_BACKEND}" --speculative-dsa-topk-backend "${SG_TOPK_BACKEND}")
   [[ "${SG_TF32}" == "1" ]]        && c+=(--enable-tf32-matmul)
@@ -82,7 +88,10 @@ common=( --gpus all --ipc=host --network host --shm-size=64g
   -e SGLANG_RAGGED_VERIFY_MODE="${SG_RAGGED}"
   -e SGLANG_DSPARK_OPT_FUSED_GREEDY_MARKOV="${SG_FUSED_MARKOV}"
   -e SGLANG_DEFAULT_THINKING="${SG_DEFAULT_THINKING}"
-  -e SGLANG_DSV4_REASONING_EFFORT="${SG_REASONING_EFFORT}" )
+  -e SGLANG_DSV4_REASONING_EFFORT="${SG_REASONING_EFFORT}"
+  -e MAX_JOBS="${MAX_JOBS:-4}"
+  -e FLASHINFER_NVCC_THREADS=2
+  -e NINJAFLAGS=-j4 )
 [[ -n "${SG_STS_COLLECT}" ]]   && common+=(-e SGLANG_DSPARK_STS_COLLECT_PATH="${SG_STS_COLLECT}")
 [[ -n "${SG_COMPRESS_DTYPE}" ]] && common+=(-e SGLANG_DSV4_COMPRESS_STATE_DTYPE="${SG_COMPRESS_DTYPE}")
 
@@ -111,13 +120,13 @@ ssh -o BatchMode=yes "${WORKER_SSH}" "docker rm -f '${NAME}' 2>/dev/null || true
 echo "== rank1 (node2) =="
 ssh -o BatchMode=yes "${WORKER_SSH}" docker run -d --name "${NAME}" "${common[@]}" \
   -e NCCL_IB_HCA=roceP2p1s0f0 -e NCCL_SOCKET_IFNAME=enP2p1s0f0np0 \
-  -v "${WORKER_MODEL_DIR}:/model:ro" -v "${HOME}/sgl-extras:/sgl-extras:ro" -v "${HOME}/sgl-rw:/sgl-rw" \
+  -v "${WORKER_MODEL_DIR}:/model:ro" -v "${HOME}/sgl-extras:/sgl-extras:ro" -v "${HOME}/sgl-rw:/sgl-rw" -v "${HOME}/.cache/flashinfer:/root/.cache/flashinfer" \
   "${IMAGE}" bash -c "$(SG_REMOTE_FORM=1 server_cmd 1)"
 
 echo "== rank0 (node3) =="
 docker run -d --name "${NAME}" "${common[@]}" \
   -e NCCL_IB_HCA=roceP2p1s0f1 -e NCCL_SOCKET_IFNAME=enP2p1s0f1np1 \
-  -v "${MODEL_DIR}:/model:ro" -v "${HOME}/sgl-extras:/sgl-extras:ro" -v "${HOME}/sgl-rw:/sgl-rw" \
+  -v "${MODEL_DIR}:/model:ro" -v "${HOME}/sgl-extras:/sgl-extras:ro" -v "${HOME}/sgl-rw:/sgl-rw" -v "${HOME}/.cache/flashinfer:/root/.cache/flashinfer" \
   "${IMAGE}" bash -c "$(server_cmd 0)"
 
 {
@@ -139,6 +148,8 @@ docker run -d --name "${NAME}" "${common[@]}" \
   echo "SG_TF32=${SG_TF32}"
   echo "SG_MIXED_CHUNK=${SG_MIXED_CHUNK}"
   echo "SG_FP4_INDEXER=${SG_FP4_INDEXER}"
+  echo "SPEC_ALGO=${SPEC_ALGO}"
+  echo "SG_DISABLE_GRAPH=${SG_DISABLE_GRAPH:-0}"
   echo "EXTRA_ARGS=${EXTRA_ARGS}"
 } > "${HOME}/sgl-rw/last-launch.env"
 echo "API: http://${HEAD_IP}:${PORT}/v1/models (mgmt: http://192.168.3.2:${PORT})"

@@ -1,0 +1,7 @@
+2026-09-02 AR vision admit OOM
+image=lmsysorg/sglang:dev-dsv4-flash-vision sha256:3b51556dfc41
+profile=CTX=262144 MEM_STATIC=0.80 SPEC_ALGO=none graphs=1-8 reasoning=high
+rank0 scheduler SIGKILL -9 after Load weight 48/48 (15:36:18 dequant done, 15:54:56 kill)
+rank1 left Up until explicit rm (NCCL heartbeat Broken pipe)
+dmesg OOM lines: empty (no CAP_SYSLOG from this user)
+next: CTX=32768 SG_DISABLE_GRAPH=1 SPEC_ALGO=none MEM_STATIC=0.75

@@ -34,8 +34,9 @@ NCCL_IB_GID_INDEX="${NCCL_IB_GID_INDEX:-3}"
 FLASHINFER_CACHE="${FLASHINFER_CACHE:-${HOME}/.cache/dsv4v-flashinfer}"
 MEDIA_DIR="${MEDIA_DIR:-${HOME}/sgl-rw/media}"
 SPEC_METHOD="${SPEC_METHOD:-probabilistic}"
-SPEC_ADAPTIVE="${SPEC_ADAPTIVE:-true}"
+SPEC_ADAPTIVE="${SPEC_ADAPTIVE:-false}"
 ENABLE_PREFIX_CACHE="${ENABLE_PREFIX_CACHE:-1}"
+REASONING_EFFORT="${REASONING_EFFORT:-high}"
 
 fail() { echo "ERROR: $*" >&2; exit 1; }
 
@@ -60,7 +61,7 @@ serve_cmd() {
     --tokenizer-mode deepseek_v4
     --tool-call-parser deepseek_v4 --enable-auto-tool-choice
     --reasoning-parser deepseek_v4
-    --default-chat-template-kwargs '{"thinking":true,"reasoning_effort":"max"}'
+    --default-chat-template-kwargs "{\"thinking\":true,\"reasoning_effort\":\"${REASONING_EFFORT}\"}"
     --compilation-config "${COMPILATION_CONFIG_JSON}"
     --distributed-executor-backend mp
     --nnodes 2 --node-rank "${rank}"

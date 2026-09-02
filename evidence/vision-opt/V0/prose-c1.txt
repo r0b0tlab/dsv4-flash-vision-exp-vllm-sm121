@@ -1,0 +1,4 @@
+prose c1 x2: 2 reqs, 1400 out tokens, wall 44.7s
+aggregate out tok/s = 31.32
+per-stream tok/s: min 30.58 med 32.09 max 32.09
+mean completion tokens = 700 (target ~500+)

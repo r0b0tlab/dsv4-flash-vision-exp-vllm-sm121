@@ -1,0 +1,22 @@
+Same live endpoint (vLLM fi512b, DSPARK k=3, 262k). Request-level chat_template_kwargs only.
+
+prompt_tokens (hi vs max from probe): high=84 max=97 (+13 effort text)
+
+SHORT-like tokenizer 512-id prompt, max_tokens=256, n=2 serial:
+  high  mean_out=34.93 tok/s  pt=600  rsn=256/256
+  max   mean_out=32.86 tok/s  pt=613  rsn=256/256
+  max is 5.9% slower (extra prefill + same 256 thinking-filled completions)
+
+arith 17*23 max_tokens=2048 n=1:
+  high  ct=18 rsn=15 pt=95  0.67s  26.69 tok/s
+  max   ct=28 rsn=25 pt=108 0.90s  31.18 tok/s
+  max thinks longer (25 vs 15 reasoning tokens); still answers.
+
+prose 700 max_tokens n=1:
+  high  32.22 tok/s  rsn=446/700  (some answer tokens)
+  max   30.02 tok/s  rsn=700/700  (entire budget spent in thinking)
+
+vllm bench serve (server default=high, no override):
+  SHORT c1 29.98  c4 30.09  vs R0 floors 41.53/60.73  NOT IMPROVED
+  MEDIUM c1 31.78 (V0)
+  prose_bench c1 31.32 / c4 agg 45.45 vs t-opt 32.54/63.50  NOT IMPROVED

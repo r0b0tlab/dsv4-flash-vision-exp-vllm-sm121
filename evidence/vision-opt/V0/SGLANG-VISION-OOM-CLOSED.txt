@@ -1,0 +1,15 @@
+SGLang vision image lmsysorg/sglang:dev-dsv4-flash-vision (arm64 sha256:3b51556dfc41) fails closed on 2xGB10 unified 128G.
+
+All SIGKILL -9 rank0 scheduler AFTER "Finished streaming dequant fp8 wo_a", never reached "Load weight end".
+
+Profiles tried:
+1. CTX=1M MEM=0.85 DSPARK graphs 1-8
+2. CTX=262144 MEM=0.80 DSPARK graphs 1-8
+3. CTX=262144 MEM=0.80 AR graphs 1-8
+4. CTX=32768 MEM=0.75 AR --disable-cuda-graph MAX_JOBS=4 skip-warmup
+5. CTX=32768 MEM=0.30 AR graph-off skip-warmup drop-cache-after-load disable-autotune
+
+OOM dmesg (32k/0.75): sglang::schedul total-vm=728GB anon-rss=35GB. coredns killed first.
+Vision keys in checkpoint: 313 / 72633 (tiny). Blocker is vision-image post-dequant GPU materialize, not KV size.
+
+Fail-forward: restore vLLM vision-54631 (served 7h at 262k DSPARK before preemption), reasoning_effort=high, then vision canary + SHORT/MEDIUM/PROSE.

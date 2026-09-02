@@ -1,0 +1,18 @@
+runtime=vLLM dsv4v-vllm:vision-54631-fi512b sha256:c4c0d7b2
+default reasoning_effort=high thinking=true DSPARK k=3 adaptive=false max_model_len=262144
+vision_canary=PASS image_pt=215 vs text_pt=95 LEFT=red RIGHT=blue
+effort_probe default=84 high=84 low=5 max=97 PASS
+
+SHORT 512/256 openai-chat random
+  c1 output_tok/s=29.98  total=99.67  accept_len=2.10  TTFT_mean=502.66ms  TPOT=31.51ms
+  c4 output_tok/s=30.09  total=100.03 accept_len=2.21
+  floors: R0 c1 41.53 / c4 60.73  IMPROVED? NO (need c1>=43.61)
+
+MEDIUM 2048/512
+  c1 output_tok/s=31.78  total=164.05 accept_len=2.36  TTFT=1600ms TPOT=28.40ms
+  V0 baseline for this runtime
+
+PROSE ~500w greedy
+  c1 x2 aggregate=31.32 per-stream med=32.09
+  c4 x1 aggregate=45.45 per-stream med=12.43
+  floors t-opt c1 32.54 / c4 63.50  IMPROVED? NO (need c1>=34.17)
