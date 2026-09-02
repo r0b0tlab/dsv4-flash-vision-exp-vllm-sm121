@@ -1,0 +1,120 @@
+{
+  "eligible_count": 5,
+  "finished_utc": "2026-09-02T22:21:11.339322+00:00",
+  "infra_error_count": 0,
+  "method": "advertised_window_niah_plus_multikey",
+  "model": "deepseek-v4-flash-vision-exp",
+  "nonce": "R0B0BENCH_NIAH_SLOT",
+  "results": {
+    "25%": {
+      "actual_depth": 0.250014572161343,
+      "api_prompt_tokens": 480409,
+      "completion_tokens": 14,
+      "elapsed_s": 363.519,
+      "filler_token_width": 12,
+      "finished_utc": "2026-09-02T21:57:02.840495+00:00",
+      "label": "25%",
+      "multikey": false,
+      "needle_retrieved": true,
+      "needle_start_tokens": 120099,
+      "post_repeats": 32748,
+      "pre_repeats": 10916,
+      "raw_prompt_tokens": 480368,
+      "requested_depth": 0.25,
+      "response": "R0B0BENCH_NIAH_SLOT",
+      "target_prompt_tokens": 524032,
+      "transport_ok": true
+    },
+    "50%": {
+      "actual_depth": 0.4999760597714645,
+      "api_prompt_tokens": 480404,
+      "completion_tokens": 14,
+      "elapsed_s": 362.706,
+      "filler_token_width": 12,
+      "finished_utc": "2026-09-02T22:03:09.625017+00:00",
+      "label": "50%",
+      "multikey": false,
+      "needle_retrieved": true,
+      "needle_start_tokens": 240170,
+      "post_repeats": 21832,
+      "pre_repeats": 21832,
+      "raw_prompt_tokens": 480363,
+      "requested_depth": 0.5,
+      "response": "R0B0BENCH_NIAH_SLOT",
+      "target_prompt_tokens": 524032,
+      "transport_ok": true
+    },
+    "90%": {
+      "actual_depth": 0.899912982292521,
+      "api_prompt_tokens": 480403,
+      "completion_tokens": 14,
+      "elapsed_s": 356.723,
+      "filler_token_width": 12,
+      "finished_utc": "2026-09-02T22:09:10.519527+00:00",
+      "label": "90%",
+      "multikey": false,
+      "needle_retrieved": true,
+      "needle_start_tokens": 432284,
+      "post_repeats": 4367,
+      "pre_repeats": 39297,
+      "raw_prompt_tokens": 480362,
+      "requested_depth": 0.9,
+      "response": "R0B0BENCH_NIAH_SLOT",
+      "target_prompt_tokens": 524032,
+      "transport_ok": true
+    },
+    "mk33": {
+      "api_prompt_tokens": 480415,
+      "completion_tokens": 9,
+      "distractor_nonces": [
+        "ni4h7q2x9",
+        "k7d2m8v4"
+      ],
+      "elapsed_s": 354.277,
+      "finished_utc": "2026-09-02T22:15:07.136505+00:00",
+      "label": "mk33",
+      "multikey": true,
+      "needle_depths": [
+        0.33,
+        0.66,
+        0.9
+      ],
+      "needle_retrieved": true,
+      "probe_nonce": "t3r9w5y1",
+      "raw_prompt_tokens": 480374,
+      "requested_depth": 0.33,
+      "response": "t3r9w5y1",
+      "target_prompt_tokens": 524032,
+      "transport_ok": true
+    },
+    "mk66": {
+      "api_prompt_tokens": 480413,
+      "completion_tokens": 9,
+      "distractor_nonces": [
+        "ni4h7q2x9",
+        "k7d2m8v4"
+      ],
+      "elapsed_s": 361.918,
+      "finished_utc": "2026-09-02T22:21:11.337461+00:00",
+      "label": "mk66",
+      "multikey": true,
+      "needle_depths": [
+        0.33,
+        0.66,
+        0.9
+      ],
+      "needle_retrieved": true,
+      "probe_nonce": "t3r9w5y1",
+      "raw_prompt_tokens": 480372,
+      "requested_depth": 0.66,
+      "response": "t3r9w5y1",
+      "target_prompt_tokens": 524032,
+      "transport_ok": true
+    }
+  },
+  "schema_version": 3,
+  "semantic_pass_count": 5,
+  "started_utc": "2026-09-02T21:50:56.143568+00:00",
+  "target_tokens": 524032,
+  "verdict": "NIAH_PASS"
+}

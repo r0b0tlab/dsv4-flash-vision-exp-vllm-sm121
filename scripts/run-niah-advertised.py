@@ -137,12 +137,19 @@ def build_multikey(base, model, target_tokens):
 
 
 def run_case(base, model, label, depth, target_tokens, multikey=False):
-    if multikey:
-        document, construction = build_multikey(base, model, target_tokens)
-        expected = MULTIKEY_NONCES[2]
-    else:
-        document, construction = build_document(base, model, target_tokens, depth)
-        expected = NONCE
+    global PREFIX
+    case_prefix = f"BEGIN DOCUMENT CASE {label} {os.urandom(8).hex()}\n"
+    saved = PREFIX
+    PREFIX = case_prefix
+    try:
+        if multikey:
+            document, construction = build_multikey(base, model, target_tokens)
+            expected = MULTIKEY_NONCES[2]
+        else:
+            document, construction = build_document(base, model, target_tokens, depth)
+            expected = NONCE
+    finally:
+        PREFIX = saved
     body = {
         "model": model,
         "messages": [

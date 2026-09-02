@@ -1,0 +1,11 @@
+{
+  "rows": 180,
+  "status_from_grader": "INCOMPLETE",
+  "correct_count": 111,
+  "incorrect_count": 8,
+  "ungraded_count": 25,
+  "grader_error_count": 36,
+  "transport_errors_by_family": {"gsm8k": 0, "humaneval": 4, "ifeval": 1, "hard_reasoning": 1},
+  "e2e_tok_s_from_rows": {"n": 180, "mean": 39.39, "sum_completion_tokens": 142028, "sum_elapsed_s": 3410.3, "aggregate_tok_s": 41.65},
+  "note": "Grader INCOMPLETE: humaneval sandbox/image_id errors. Transport 174/180 clean. e2e from elapsed_seconds on rows. thinking=high."
+}

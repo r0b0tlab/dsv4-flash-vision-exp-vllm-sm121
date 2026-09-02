@@ -1,0 +1,11 @@
+{
+  "served": "deepseek-v4-flash-vision-exp",
+  "max_model_len": 524288,
+  "kv_cache_tokens": 1207784,
+  "kv_concurrency_at_max": 2.3,
+  "image_size_bytes": 22261278770,
+  "image_id": "sha256:c4c0d7b269b2b0af0d3edaf92cfab1add8644d99eb518f6dbf3e99511ea4e84f",
+  "image_arch": "arm64",
+  "checkpoint_bytes_in_container": 167831876729,
+  "vision_short": "8/8 PASS"
+}

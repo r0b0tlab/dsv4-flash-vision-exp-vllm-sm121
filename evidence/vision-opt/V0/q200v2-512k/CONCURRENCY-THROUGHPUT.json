@@ -1,0 +1,11 @@
+{
+  "profile": "524288 K=3 probabilistic thinking=high FDO 1-8 autotune-on fi512b",
+  "max_num_seqs": 8,
+  "short_512_256": {
+    "c1_warm": {"out_tok_s": 30.87, "ttft_ms": 423, "tpot_ms": 30.86, "accept": 2.09},
+    "c2": {"out_tok_s": 20.85, "ttft_ms": 4325, "tpot_ms": 79.01, "accept": 2.22, "note": "likely cold"},
+    "c4": {"out_tok_s": 44.73, "ttft_ms": 659, "tpot_ms": 82.07, "accept": 2.23},
+    "c8": {"out_tok_s": 32.09, "ttft_ms": 25324, "tpot_ms": 114.42, "accept": 2.14, "note": "queued at max_num_seqs=8"}
+  },
+  "c1_2048out": {"out_tok_s": 33.85, "ttft_ms": 6743, "tpot_ms": 26.26, "accept": 2.85}
+}
