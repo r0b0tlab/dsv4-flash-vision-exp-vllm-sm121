@@ -1,0 +1,13 @@
+{
+  "k": 5,
+  "draft_sample_method": "greedy",
+  "cells": {
+    "1": {"agg": 33.58, "per": [33.6]},
+    "2": {"agg": 13.35, "per": [6.67, 6.67]},
+    "4": {"agg": 60.73, "per": [20.17, 15.87, 15.19, 15.87]}
+  },
+  "vs_k5_probabilistic_c1": 34.77,
+  "delta_pct": -3.4,
+  "adopt": false,
+  "arith": "391"
+}
