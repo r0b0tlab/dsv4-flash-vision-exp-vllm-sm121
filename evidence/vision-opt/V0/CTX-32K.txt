@@ -1,0 +1,6 @@
+32k vs 262k same stack (K=3 prob, high, FDO 1-8, autotune on)
+  32k  KV=99150  conc=3.03x  vision PASS
+  SHORT c1w 32.15  TTFT 361  TPOT 29.81  accept 2.19
+  SHORT c4w 49.65  TTFT 670  TPOT 77.32  accept 2.13
+  262k KV=731016 conc=2.79x  c1w 31.01  c4w 48.12
+  32k does not hit 43.61. Next 524288.

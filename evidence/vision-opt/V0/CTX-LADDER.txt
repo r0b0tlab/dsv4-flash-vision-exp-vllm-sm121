@@ -1,0 +1,9 @@
+context ladder SHORT 512/256 greedy, K=3 prob, thinking=high, FDO 1-8, autotune on, fi512b
+vision PASS at 32k and 524288. Live left at 524288. Do not stop.
+
+  32768   KV=99150    conc=3.03x  c1w=32.15  c4w=49.65
+  262144  KV=731016   conc=2.79x  c1w=31.01  c4w=48.12
+  524288  KV=1207784  conc=2.30x  c1w=30.87  c4w=46.61
+
+c1 almost flat vs window. 32k is the speed peak of this trio, still <43.61.
+512k admits (2.30x concurrent). Server stays up.
