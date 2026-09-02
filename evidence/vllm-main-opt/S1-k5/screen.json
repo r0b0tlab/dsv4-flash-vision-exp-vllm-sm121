@@ -1,0 +1,16 @@
+{
+  "k": 5,
+  "num_spec_tokens": 5,
+  "baseline_k3_c1": 30.83,
+  "cells": {
+    "1": {"agg": 34.77, "per": [34.79], "pt": 572},
+    "2": {"agg": 13.28, "per": [6.64, 6.64], "pt": 572},
+    "4": {"agg": 60.61, "per": [20.17, 15.86, 15.16, 15.86], "pt": 572}
+  },
+  "c1_delta_vs_k3_pct": 12.8,
+  "adopt": true,
+  "vision_ok": true,
+  "vision_dt_s": 15.1,
+  "arith": "391",
+  "note": "c2 collapse (~6.7 tok/s/stream) reproduces with distinct prompts; not prefix-cache. K=5 adopted on c1 +12.8%."
+}
