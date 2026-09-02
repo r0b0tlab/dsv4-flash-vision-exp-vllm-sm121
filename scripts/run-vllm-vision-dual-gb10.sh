@@ -22,7 +22,10 @@ KV_CACHE_DTYPE="${KV_CACHE_DTYPE:-fp8}"
 ENFORCE_EAGER="${ENFORCE_EAGER:-0}"
 ENABLE_EP="${ENABLE_EP:-0}"
 FP4_INDEXER="${FP4_INDEXER:-0}"
-COMPILATION_CONFIG_JSON="${COMPILATION_CONFIG_JSON:-{\"cudagraph_mode\":\"FULL\"}}"
+# Do not put `}` inside ${var:-default} — bash ends the expansion at the first `}`.
+if [[ -z "${COMPILATION_CONFIG_JSON:-}" ]]; then
+  COMPILATION_CONFIG_JSON='{"cudagraph_mode":"FULL"}'
+fi
 RANK0_ETH_IF="${RANK0_ETH_IF:-enP2p1s0f1np1}"
 RANK0_HCA="${RANK0_HCA:-roceP2p1s0f1}"
 RANK1_ETH_IF="${RANK1_ETH_IF:-enP2p1s0f0np0}"
