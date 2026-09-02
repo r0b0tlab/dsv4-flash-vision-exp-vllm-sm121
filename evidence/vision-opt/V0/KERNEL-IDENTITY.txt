@@ -1,0 +1,11 @@
+live K=3 fi512b kernel identity (not Marlin)
+quantization=deepseek_v4_fp8
+linear: DeepGemmFp8BlockScaledMMKernel (Fp8LinearMethod); DeepGEMM PDL + E8M0 on
+MoE: DEEPGEMM_MXFP4 + DeepGemmFP4Experts + MoEPrepareAndFinalizeNoDPEPModular
+KV: fp8_ds_mla
+attn: DeepseekV4FlashInferMLASparseBackend → cudagraph FULL_DECODE_ONLY
+allreduce: PYNCCL only (FlashInfer AR unsupported world_size=2)
+moe_backend=auto linear_backend=auto  (resolved DeepGEMM, not MARLIN)
+JIT-during-infer warnings: _count_expert_num_tokens, _compute_global_topk_indices_and_lens_kernel,
+  _prepare_dflash_inputs_kernel, _compute_local_logits_stats_kernel, _rejection_kernel,
+  _resample_kernel, _compute_image_visibility_kernel, _compute_swa_indices_and_lens_kernel

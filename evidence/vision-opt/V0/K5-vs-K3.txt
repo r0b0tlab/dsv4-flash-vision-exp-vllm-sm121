@@ -1,0 +1,9 @@
+K=6 ILLEGAL: num_speculative_tokens must be divisible by n_predict=5 (dspark_block_size).
+K=5 (legal substitute), reasoning=high, same fi512b image, vision canary PASS.
+
+SHORT 512/256 warm:
+  K=3 c1 29.98  TTFT 503ms  TPOT 31.51  accept 2.10
+  K=5 c1 26.97  TTFT 395ms  TPOT 35.68  accept 2.20  REJECTED
+  K=5 c4 36.37 vs K=3 c4 30.09 (c4 only; c1 is the gate)
+per-position K=5: 80.0 / 22.8 / 10.8 / 4.5 / 2.2  — extra drafts wasted
+restore K=3

@@ -1,0 +1,43 @@
+{
+  "pass": 3,
+  "fail": 0,
+  "results": [
+    {
+      "id": "arith_17x23",
+      "ok": true,
+      "elapsed_s": 22.684784412384033,
+      "usage": {
+        "prompt_tokens": 95,
+        "total_tokens": 113,
+        "completion_tokens": 18,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 15
+        }
+      },
+      "snippet": "391 We need answer 17*23 = 391. Need just number."
+    },
+    {
+      "id": "vision_red_blue",
+      "ok": true,
+      "elapsed_s": 33.121294021606445,
+      "usage": {
+        "prompt_tokens": 215,
+        "total_tokens": 362,
+        "completion_tokens": 147,
+        "prompt_tokens_details": null,
+        "completion_tokens_details": {
+          "reasoning_tokens": 138
+        }
+      },
+      "prompt_tokens": 215,
+      "snippet": "LEFT=red; RIGHT=blue 1. Analyze the user's request: The user wants me to identify the colors of the left and right halves of the provided image and reply in the exact format \"LEFT=<color>; RIGHT=<color>\".\n2. Examine the image: The image is a rectangle split vertically into two equal halves.\n3. Identify the left half color: The left half is solid red.\n4. Identify the right half color: The right hal"
+    },
+    {
+      "id": "text_after_vision",
+      "ok": true,
+      "elapsed_s": 0.31885409355163574,
+      "snippet": "4"
+    }
+  ]
+}
