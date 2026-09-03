@@ -1,0 +1,12 @@
+{
+  "status": "SCORED",
+  "family": "bfcl_hard20",
+  "score": {
+    "accuracy": 0.65,
+    "correct_count": 13,
+    "incorrect_count": 7,
+    "total_count": 20
+  },
+  "thinking": "low",
+  "note": "Frozen Q200v2 BFCL-hard20 contract uses thinking=low. Serve default is high."
+}
