@@ -21,7 +21,8 @@ def main() -> None:
     niah = load("niah-public.json")
     sweep = load("CONCURRENCY.json")
     vis = load("vision-short.json")
-    td = load("TD2W300-thinkoff.json")
+    td = load("TD2W300-high.json")
+    td_off = load("TD2W300-thinkoff.json")
     think = load("THINK-MODES.json")
     tel = load("TELEMETRY-SUMMARY.json")
     hr = load("hard-reasoning-grade.json")
@@ -168,7 +169,8 @@ a {{ color:var(--ink); }}
 <tr><th>c</th><th>tok/s</th><th>TTFT ms</th><th>TPOT ms</th></tr>
 {"".join(f"<tr><td>{k}</td><td>{v['output_tok_s']}</td><td>{v['ttft_ms']}</td><td>{v['tpot_ms']}</td></tr>" for k,v in (sweep or {}).items())}
 </table>
-<p>TD2W300 spelled 1–300, thinking=off: {td.get("output_tok_s") if td else "—"} tok/s, accept rate {td.get("accept_rate") if td else "—"} (k=3).</p>
+<p>TD2W300 spelled 1–300, thinking=<b>high</b> (this profile): {td.get("output_tok_s") if td else "—"} tok/s, {td.get("completion_tokens") if td else "—"} tokens all reasoning, content empty, finish={td.get("finish_reason") if td else "—"}. Accept rate {td.get("accept_rate") if td else "—"} (k=3). The list was not produced.</p>
+<p>Same prompt thinking=off (not the production default): {td_off.get("output_tok_s") if td_off else "—"} tok/s, finished stop, listed through three hundred.</p>
 
 <h2>Thinking modes (short, 256 tok)</h2>
 <table><tr><th>effort</th><th>mean tok/s</th></tr>{think_rows}</table>

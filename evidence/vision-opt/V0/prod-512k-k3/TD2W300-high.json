@@ -1,0 +1,21 @@
+{
+  "name": "TD2W300",
+  "thinking": "high",
+  "elapsed_s": 317.109,
+  "prompt_tokens": 114,
+  "completion_tokens": 16384,
+  "reasoning_tokens": 16384,
+  "output_tok_s": 51.667,
+  "finish_reason": "length",
+  "content_chars": 0,
+  "content_head": "",
+  "content_tail": "",
+  "metrics_delta": {
+    "vllm:generation_tokens_total": 16384.0,
+    "vllm:prompt_tokens_total": 114.0,
+    "vllm:spec_decode_num_accepted_tokens_total": 11976.0,
+    "vllm:spec_decode_num_draft_tokens_total": 13221.0
+  },
+  "accept_rate": 0.9058,
+  "accept_len_est": 4.529
+}
