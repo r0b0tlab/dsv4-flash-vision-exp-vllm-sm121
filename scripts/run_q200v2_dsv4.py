@@ -91,14 +91,18 @@ def main() -> int:
         chat_kwargs=q.DEFAULT_CHAT_KWARGS,
     )
     wall = time.perf_counter() - t0
-    rows_path = Path(f"{args.run_id}.jsonl")
+    rows_path = Path(f"{args.run_id}.rows.jsonl")
     e2e = []
+    sum_ct = 0.0
+    sum_el = 0.0
     if rows_path.is_file():
         for line in rows_path.read_text().splitlines():
             row = json.loads(line)
             u = row.get("usage") or {}
-            el = row.get("elapsed_seconds") or row.get("elapsed") or 0
-            ct = u.get("completion_tokens") or 0
+            el = float(row.get("elapsed_seconds") or row.get("elapsed") or 0)
+            ct = float(u.get("completion_tokens") or 0)
+            sum_ct += ct
+            sum_el += el
             if el and ct:
                 e2e.append(ct / el)
     summary["campaign_wall_seconds"] = wall
@@ -107,7 +111,9 @@ def main() -> int:
         "mean": (sum(e2e) / len(e2e)) if e2e else None,
         "min": min(e2e) if e2e else None,
         "max": max(e2e) if e2e else None,
-        "aggregate_completion_over_wall": None,
+        "sum_completion_tokens": int(sum_ct),
+        "sum_elapsed_s": round(sum_el, 3),
+        "aggregate_completion_over_wall": (sum_ct / sum_el) if sum_el else None,
     }
     Path(f"{args.run_id}.summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
     print(json.dumps({k: summary[k] for k in ("status", "rows", "correct_count", "incorrect_count", "ungraded_count", "grader_error_count", "e2e_tok_s", "campaign_wall_seconds") if k in summary}, indent=2))

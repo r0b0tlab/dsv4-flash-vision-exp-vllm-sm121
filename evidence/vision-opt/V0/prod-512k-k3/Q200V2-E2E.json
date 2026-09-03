@@ -1,0 +1,19 @@
+{
+  "profile": "524288 k=3 probabilistic thinking=high fi512b",
+  "status_from_grader": "INCOMPLETE",
+  "rows": 180,
+  "correct_count": 111,
+  "incorrect_count": 8,
+  "ungraded_count": 25,
+  "grader_error_count": 36,
+  "e2e_tok_s": {
+    "n": 180,
+    "mean": 39.084,
+    "min": 4.062,
+    "max": 55.390,
+    "sum_completion_tokens": 138922,
+    "sum_elapsed_s": 3441.932,
+    "aggregate_tok_s": 40.362
+  },
+  "note": "Grader INCOMPLETE: humaneval sandbox/image_id (36). e2e from row elapsed_seconds. thinking=high. k=3. 512k."
+}

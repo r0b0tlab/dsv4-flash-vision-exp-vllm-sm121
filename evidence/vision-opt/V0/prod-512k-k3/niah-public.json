@@ -1,0 +1,36 @@
+{
+  "verdict": "NIAH_PASS",
+  "target_tokens": 524032,
+  "results": {
+    "25%": {
+      "retrieved": true,
+      "api_prompt_tokens": 480407,
+      "elapsed_s": 409.939,
+      "multikey": false
+    },
+    "50%": {
+      "retrieved": true,
+      "api_prompt_tokens": 480405,
+      "elapsed_s": 405.793,
+      "multikey": false
+    },
+    "90%": {
+      "retrieved": true,
+      "api_prompt_tokens": 480403,
+      "elapsed_s": 396.363,
+      "multikey": false
+    },
+    "mk33": {
+      "retrieved": true,
+      "api_prompt_tokens": 480413,
+      "elapsed_s": 401.267,
+      "multikey": true
+    },
+    "mk66": {
+      "retrieved": true,
+      "api_prompt_tokens": 480405,
+      "elapsed_s": 402.735,
+      "multikey": true
+    }
+  }
+}

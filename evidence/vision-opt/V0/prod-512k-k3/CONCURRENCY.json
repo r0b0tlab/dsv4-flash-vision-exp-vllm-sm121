@@ -1,0 +1,26 @@
+{
+  "c1": {
+    "output_tok_s": 28.88,
+    "ttft_ms": 567.6,
+    "tpot_ms": 32.53,
+    "completed": 2
+  },
+  "c2": {
+    "output_tok_s": 36.66,
+    "ttft_ms": 650.6,
+    "tpot_ms": 51.03,
+    "completed": 4
+  },
+  "c4": {
+    "output_tok_s": 34.77,
+    "ttft_ms": 3690.9,
+    "tpot_ms": 96.65,
+    "completed": 8
+  },
+  "c8": {
+    "output_tok_s": 58.24,
+    "ttft_ms": 1600.5,
+    "tpot_ms": 119.94,
+    "completed": 16
+  }
+}

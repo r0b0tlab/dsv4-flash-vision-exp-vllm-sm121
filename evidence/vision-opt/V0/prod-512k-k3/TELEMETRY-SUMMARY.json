@@ -1,0 +1,7 @@
+{
+  "samples": 5226,
+  "mean_w": 38.16,
+  "max_w": 64.68,
+  "mean_util": 80.34,
+  "note": "1 Hz nvidia-smi during Q200/BFCL/NIAH/sweep on the serving node. Mean over both GPUs."
+}
