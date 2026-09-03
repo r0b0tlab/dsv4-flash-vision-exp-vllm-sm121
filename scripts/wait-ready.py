@@ -14,7 +14,7 @@ def get(url, timeout=30):
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--base-url", default="http://192.168.5.1:8000")
+    p.add_argument("--base-url", default="http://127.0.0.1:8000")
     p.add_argument("--timeout", type=int, default=3600)
     args = p.parse_args()
     base = args.base_url.rstrip("/")

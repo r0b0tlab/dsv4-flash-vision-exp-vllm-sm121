@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # DSV4-Flash-Vision-Exp dual-GB10 TP=2 — official vision image + PR#54631 overlay.
-# rank0 = node3 (192.168.5.2), rank1 = node2 (192.168.5.1). Run ON node3.
+# Run on rank0. Set WORKER_SSH and HEAD_IP for your pair (no baked LAN defaults).
 # SG_DRYRUN=1 prints both docker commands and exits 0.
 set -euo pipefail
 
@@ -9,8 +9,8 @@ NAME="${NAME:-dsv4v_vllm}"
 MODEL_DIR="${DSV4V_MODEL_DIR:-${HOME}/models/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp}"
 WORKER_MODEL_DIR="${DSV4V_WORKER_MODEL_DIR:-${MODEL_DIR}}"
 SERVED="${SERVED_MODEL_NAME:-deepseek-v4-flash-vision-exp}"
-WORKER_SSH="${WORKER_SSH:-r0b0tdgx@192.168.5.1}"
-HEAD_IP="${HEAD_IP:-192.168.5.2}"
+WORKER_SSH="${WORKER_SSH:?set WORKER_SSH to rank1 user@host}"
+HEAD_IP="${HEAD_IP:?set HEAD_IP to rank0 fabric address}"
 MASTER_PORT="${MASTER_PORT:-25000}"
 PORT="${PORT:-8000}"
 MAX_MODEL_LEN="${MAX_MODEL_LEN:-262144}"
@@ -139,4 +139,4 @@ docker run -d --name "${NAME}" \
   -e NCCL_IB_HCA="${RANK0_HCA}" -e NCCL_SOCKET_IFNAME="${RANK0_ETH_IF}" \
   "${LOCAL_ID}" -lc "$(serve_cmd 0 '')"
 
-echo "API: http://${HEAD_IP}:${PORT}/v1/models (mgmt: http://192.168.3.2:${PORT})"
+echo "API: http://${HEAD_IP}:${PORT}/v1/models"

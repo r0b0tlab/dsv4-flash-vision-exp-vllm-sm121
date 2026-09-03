@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Proves server-side thinking/effort defaults via prompt_tokens deltas (encoder prepends the effort text at index 0).
 set -u
-B="${1:-http://192.168.3.2:30000}"; M="${2:-deepseek-v4-flash-vision-exp}"
+B="${1:-http://127.0.0.1:8000}"; M="${2:-deepseek-v4-flash-vision-exp}"
 pt() { curl -s -m 120 "$B/v1/chat/completions" -H 'Content-Type: application/json' -d "$1" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(d["usage"]["prompt_tokens"])'; }
 base='{"model":"'$M'","messages":[{"role":"user","content":"hi"}],"max_tokens":1'
 d=$(pt "$base}")

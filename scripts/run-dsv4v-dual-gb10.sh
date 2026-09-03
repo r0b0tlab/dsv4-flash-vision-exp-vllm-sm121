@@ -8,8 +8,8 @@ NAME="${NAME:-dsv4v_vllm}"
 MODEL_DIR="${DSV4V_MODEL_DIR:-${HOME}/models/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp}"
 WORKER_MODEL_DIR="${DSV4V_WORKER_MODEL_DIR:-${MODEL_DIR}}"
 SERVED_MODEL_NAME="${SERVED_MODEL_NAME:-deepseek-v4-flash-vision-exp}"
-WORKER_SSH="${WORKER_SSH:-r0b0tdgx@192.168.5.1}"  # node2, from node3 over the direct lane
-HEAD_IP="${HEAD_IP:-192.168.5.2}"                # node3 lane addr — rank0 rendezvous
+WORKER_SSH="${WORKER_SSH:?set WORKER_SSH to rank1 user@host}"  # rank1
+HEAD_IP="${HEAD_IP:?set HEAD_IP to rank0 fabric address}"
 MASTER_PORT="${MASTER_PORT:-25000}"
 PORT="${PORT:-8000}"
 MAX_MODEL_LEN="${MAX_MODEL_LEN:-327680}"
@@ -161,5 +161,5 @@ docker run -d --name "${NAME}" \
   -e NCCL_SOCKET_IFNAME="${RANK0_ETH_IF}" \
   "${RUNTIME_IMAGE_REF}" -lc "$(serve_cmd 0 '' "${RANK0_ETH_IF}" "${RANK0_HCA}")"
 
-echo "API: http://${HEAD_IP}:${PORT}/v1/models  (also via mgmt: http://192.168.3.2:${PORT})"
-echo "Logs: docker logs -f ${NAME} (node3/rank0) ; ssh ${WORKER_SSH} docker logs -f ${NAME} (node2/rank1)"
+echo "API: http://${HEAD_IP}:${PORT}/v1/models"
+echo "Logs: docker logs -f ${NAME} (rank0) ; ssh ${WORKER_SSH} docker logs -f ${NAME} (rank1)"

@@ -184,7 +184,7 @@ def run_case(base, model, label, depth, target_tokens, multikey=False):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-url", default="http://192.168.5.1:8000")
+    parser.add_argument("--base-url", default="http://127.0.0.1:8000")
     parser.add_argument("--output", required=True)
     parser.add_argument("--target-tokens", type=int, default=1048512,
                         help="default: 1048576 - 64 (advertised window minus headroom)")

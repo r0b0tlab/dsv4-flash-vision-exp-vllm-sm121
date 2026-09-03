@@ -7,7 +7,7 @@ MODEL="${2:?served-model}"
 TOK="${3:?tokenizer-path}"
 OUT="${4:?out-dir}"
 LIST="${5:-1 2 4 8 16}"
-BENCH_PY="${BENCH_PY:-/home/r0b0tdgx/vllm-gb10/.venv-laguna/bin/python3 -m vllm.entrypoints.cli.main bench serve}"
+BENCH_PY="${BENCH_PY:-python3 -m vllm.entrypoints.cli.main bench serve}"
 
 mkdir -p "${OUT}"
 for C in ${LIST}; do

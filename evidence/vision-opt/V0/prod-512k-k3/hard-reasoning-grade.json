@@ -1,0 +1,30 @@
+{
+  "family": "hard_reasoning",
+  "n": 20,
+  "passed": 19,
+  "failed": 1,
+  "ungraded": 0,
+  "grader": "manual_adjudication_vs_frozen_ref_and_math",
+  "rows": [
+    {"id": "hard-00", "passed": true, "note": "n^3-n always div by 6; for prime p>3, p^3-p always div by 24. Frozen ref says p=7 gives 342 not div by 24; actual 336=14*24. Model correct; ref arithmetic wrong."},
+    {"id": "hard-01", "passed": true, "note": "13/4"},
+    {"id": "hard-02", "passed": true, "note": "Pairs from factorizations of 105: (53,52),(19,16),(13,8),(11,4). Frozen ref omitted (13,8)=169-64=105."},
+    {"id": "hard-03", "passed": true, "note": "Exactly five sentences; standard evenness contradiction."},
+    {"id": "hard-04", "passed": true, "note": "1/6048000"},
+    {"id": "hard-05", "passed": true, "note": "L_n=L_{n-1}-4, empties at 25h"},
+    {"id": "hard-06", "passed": true, "note": "binsearch Θ(log n), heapify Θ(n), BFS Θ(n), mergesort Θ(n log n), quicksort Θ(n^2)"},
+    {"id": "hard-07", "passed": true, "note": "3/10"},
+    {"id": "hard-08", "passed": false, "note": "Boxed 1. Frozen/math: Frobenius 6*7-6-7=29."},
+    {"id": "hard-09", "passed": true, "note": "3 remainder states, accept rem 0, MSB-first 2n+b transitions"},
+    {"id": "hard-10", "passed": true, "note": "2"},
+    {"id": "hard-11", "passed": true, "note": "1"},
+    {"id": "hard-12", "passed": true, "note": "True for finite graphs (longest-path). Infinite regular tree caveat is extra, not a fail."},
+    {"id": "hard-13", "passed": true, "note": "2/3"},
+    {"id": "hard-14", "passed": true, "note": "256"},
+    {"id": "hard-15", "passed": true, "note": "0"},
+    {"id": "hard-16", "passed": true, "note": "1/(2π) m"},
+    {"id": "hard-17", "passed": true, "note": "Look-and-say / Conway L operator on 1"},
+    {"id": "hard-18", "passed": true, "note": "4 half-squares, diagonal sqrt(2)/2"},
+    {"id": "hard-19", "passed": true, "note": "1/3"}
+  ]
+}

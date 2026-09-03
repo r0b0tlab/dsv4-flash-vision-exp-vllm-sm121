@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Gates: arithmetic 4/4 + max_tokens 1-vs-2 probe + health. Host-side, hits API.
 set -u
-B=http://192.168.3.2:30000
+B="${B:-http://127.0.0.1:8000}"
 M=deepseek-v4-flash-vision-exp
 pass=0; fail=0
 q() { # prompt max_tokens

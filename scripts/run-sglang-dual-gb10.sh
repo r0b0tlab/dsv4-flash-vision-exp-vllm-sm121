@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # SGLang DSV4-Flash-Vision-Exp dual-GB10 TP=2 — vision-capable + reasoning=high (v3)
-# rank0 = node3 (192.168.5.2), rank1 = node2 (192.168.5.1). Run ON node3.
+# rank0/rank1 via WORKER_SSH and HEAD_IP (required).
 # SG_DRYRUN=1 prints the two docker commands and exits 0 (used by tests).
 # Do NOT apply patch_sglang_trackt.py (skip-list) on the vision image.
 set -euo pipefail
@@ -10,8 +10,8 @@ NAME="${NAME:-sglang_dsv4v}"
 MODEL_DIR="${SG_MODEL_DIR:-${HOME}/models/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp}"
 WORKER_MODEL_DIR="${SG_WORKER_MODEL_DIR:-${MODEL_DIR}}"
 SERVED="${SERVED:-deepseek-v4-flash-vision-exp}"
-WORKER_SSH="${WORKER_SSH:-r0b0tdgx@192.168.5.1}"
-HEAD_IP="${HEAD_IP:-192.168.5.2}"
+WORKER_SSH="${WORKER_SSH:?set WORKER_SSH to rank1 user@host}"
+HEAD_IP="${HEAD_IP:?set HEAD_IP to rank0 fabric address}"
 DIST_PORT="${DIST_PORT:-25001}"
 PORT="${PORT:-30000}"
 TP="${TP:-2}"
@@ -152,5 +152,5 @@ docker run -d --name "${NAME}" "${common[@]}" \
   echo "SG_DISABLE_GRAPH=${SG_DISABLE_GRAPH:-0}"
   echo "EXTRA_ARGS=${EXTRA_ARGS}"
 } > "${HOME}/sgl-rw/last-launch.env"
-echo "API: http://${HEAD_IP}:${PORT}/v1/models (mgmt: http://192.168.3.2:${PORT})"
+echo "API: http://${HEAD_IP}:${PORT}/v1/models"
 echo "logs: docker logs -f ${NAME} (here) | ssh ${WORKER_SSH} docker logs -f ${NAME}"

@@ -15,7 +15,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-RUNNER = Path("/home/r0b0tdgx/qwen38-flash-next-w4a16/q200v2ar-20260829T141533Z-runner")
+RUNNER = Path(__import__("os").environ["Q200V2_RUNNER"])
 sys.path.insert(0, str(RUNNER / "scripts"))
 spec = importlib.util.spec_from_file_location("run_quality_set", RUNNER / "scripts" / "run_quality_set.py")
 q = importlib.util.module_from_spec(spec)

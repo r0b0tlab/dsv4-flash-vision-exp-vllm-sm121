@@ -6,7 +6,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path("/home/r0b0tdgx/qwen38-flash-next-w4a16/q200v2ar-20260829T141533Z-runner/scripts")))
+sys.path.insert(0, str(Path(__import__("os").environ["Q200V2_RUNNER"]) / "scripts"))
 import run_bfcl_hard20 as b  # noqa: E402
 
 _orig = b.start_fresh_run

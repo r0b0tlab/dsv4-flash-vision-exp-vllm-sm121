@@ -5,8 +5,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-EV = Path("/home/r0b0tdgx/projects/DeepSeek-V4-Flash-Vision-Exp/evidence/vision-opt/V0/prod-512k-k3")
-OUT = Path("/home/r0b0tdgx/projects/DeepSeek-V4-Flash-Vision-Exp/publication/html/index.html")
+_REPO = Path(__file__).resolve().parents[1]
+EV = _REPO / "evidence/vision-opt/V0/prod-512k-k3"
+OUT = _REPO / "publication/html/index.html"
 
 
 def load(name: str):

@@ -9,9 +9,10 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-ROWS = Path("/home/r0b0tdgx/projects/DeepSeek-V4-Flash-Vision-Exp/evidence/vision-opt/V0/prod-512k-k3/q200v2-text180.rows.jsonl")
-DS = Path("/home/r0b0tdgx/qwen38-flash-next-w4a16/q200v2ar-20260829T141533Z-runner/artifacts/quality-text-180-v2.jsonl")
-OUT = Path("/home/r0b0tdgx/projects/DeepSeek-V4-Flash-Vision-Exp/evidence/vision-opt/V0/prod-512k-k3/humaneval-local-grade.json")
+_REPO = Path(__file__).resolve().parents[1]
+ROWS = Path(__import__("os").environ.get("Q200_ROWS", str(_REPO / "evidence/vision-opt/V0/prod-512k-k3/q200v2-text180.rows.jsonl")))
+DS = Path(__import__("os").environ["Q200V2_DATASET"])
+OUT = Path(__import__("os").environ.get("Q200_HE_OUT", str(_REPO / "evidence/vision-opt/V0/prod-512k-k3/humaneval-local-grade.json")))
 
 
 def extract_code(text: str) -> str:

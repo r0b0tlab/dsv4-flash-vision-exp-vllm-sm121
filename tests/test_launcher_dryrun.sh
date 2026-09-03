@@ -2,7 +2,7 @@
 # tests/test_launcher_dryrun.sh — render both rank commands without docker and assert the profile.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-out="$(SG_DRYRUN=1 SG_STS_TABLE=/sgl-extras/sts.json SG_TOPK_BACKEND=flashinfer SG_TF32=1 SG_MIXED_CHUNK=1 SG_FP4_INDEXER=1 SG_COMPRESS_DTYPE=bf16 bash scripts/run-sglang-dual-gb10.sh)"
+out="$(WORKER_SSH=user@host HEAD_IP=127.0.0.1 SG_DRYRUN=1 SG_STS_TABLE=/sgl-extras/sts.json SG_TOPK_BACKEND=flashinfer SG_TF32=1 SG_MIXED_CHUNK=1 SG_FP4_INDEXER=1 SG_COMPRESS_DTYPE=bf16 bash scripts/run-sglang-dual-gb10.sh)"
 for needle in \
   "--context-length 1048576" "--max-running-requests 8" "--cuda-graph-bs 1 2 3 4 6 8" \
   "--reasoning-parser deepseek-v4" "--tool-call-parser deepseekv4" "--watchdog-timeout 1800" \

@@ -1,2 +1,13 @@
 *.pyc
 __pycache__/
+evidence/vision-opt/V0/q200v2-512k/q200v2-text180.rows.jsonl
+evidence/vision-opt/V0/prod-512k-k3/q200v2-text180.rows.jsonl
+evidence/vision-opt/V0/prod-512k-k3/q200v2-text180.stderr
+evidence/vision-opt/V0/prod-512k-k3/q200v2-text180.stdout
+evidence/vision-opt/V0/prod-512k-k3/niah-524288.json
+evidence/vision-opt/V0/prod-512k-k3/bfcl-hard20/
+evidence/vision-opt/V0/prod-512k-k3/bfcl-hard20-run/
+evidence/vision-opt/V0/prod-512k-k3/bfcl-hard20-run3/
+evidence/vision-opt/V0/prod-512k-k3/bfcl-hard20-run4/
+evidence/vision-opt/V0/k5-32k/
+evidence/vision-opt/V0/prod-512k-k3/q200v2-text180.summary.json
