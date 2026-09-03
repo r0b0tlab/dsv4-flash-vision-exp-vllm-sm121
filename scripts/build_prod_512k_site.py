@@ -21,7 +21,7 @@ def main() -> None:
     niah = load("niah-public.json")
     sweep = load("CONCURRENCY.json")
     vis = load("vision-short.json")
-    td = load("TD2W300-high.json")
+    td = load("TD2W300-thinkoff.json")
     think = load("THINK-MODES.json")
     tel = load("TELEMETRY-SUMMARY.json")
     hr = load("hard-reasoning-grade.json")
@@ -168,7 +168,7 @@ a {{ color:var(--ink); }}
 <tr><th>c</th><th>tok/s</th><th>TTFT ms</th><th>TPOT ms</th></tr>
 {"".join(f"<tr><td>{k}</td><td>{v['output_tok_s']}</td><td>{v['ttft_ms']}</td><td>{v['tpot_ms']}</td></tr>" for k,v in (sweep or {}).items())}
 </table>
-<p>TD2W300 spelled 1–300, thinking=high: {td.get("output_tok_s") if td else "—"} tok/s.</p>
+<p>TD2W300 spelled 1–300: {td.get("output_tok_s") if td else "—"} tok/s.</p>
 
 <h2>Thinking modes (short, 256 tok)</h2>
 <table><tr><th>effort</th><th>mean tok/s</th></tr>{think_rows}</table>

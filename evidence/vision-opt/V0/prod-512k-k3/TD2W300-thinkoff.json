@@ -1,0 +1,28 @@
+{
+  "name": "TD2W300",
+  "prompt": "one two three four five. Continue through three hundred in English words, spaces only.",
+  "thinking": "off",
+  "max_tokens": 8192,
+  "elapsed_s": 16.522,
+  "prompt_tokens": 21,
+  "completion_tokens": 911,
+  "reasoning_tokens": 0,
+  "output_tok_s": 55.137,
+  "finish_reason": "stop",
+  "content_chars": 5464,
+  "content_head": "six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty twenty-one twenty-two twenty-three twenty-four twenty-five twenty-six tw",
+  "content_tail": " hundred ninety-three two hundred ninety-four two hundred ninety-five two hundred ninety-six two hundred ninety-seven two hundred ninety-eight two hundred ninety-nine three hundred",
+  "reasoning_chars": 0,
+  "reasoning_head": "",
+  "reasoning_tail": "",
+  "listed_three_hundred": true,
+  "complete": true,
+  "metrics_delta": {
+    "vllm:generation_tokens_total": 911.0,
+    "vllm:prompt_tokens_total": 21.0,
+    "vllm:spec_decode_num_accepted_tokens_total": 668.0,
+    "vllm:spec_decode_num_draft_tokens_total": 726.0
+  },
+  "accept_rate": 0.9201,
+  "accept_len_est": 4.601
+}
