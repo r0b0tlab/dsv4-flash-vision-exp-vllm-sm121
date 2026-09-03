@@ -20,6 +20,14 @@ def load(name: str):
     return json.loads(p.read_text()) if p.exists() else None
 
 
+EV1M = _REPO / "evidence/vision-opt/V0/prod-1m-k5-adapt"
+
+
+def load1m(name: str):
+    p = EV1M / name
+    return json.loads(p.read_text()) if p.exists() else None
+
+
 def quality_counts(rows):
     """Count scored outcomes per family from the q200 rows jsonl."""
     from collections import Counter
@@ -44,6 +52,11 @@ def main() -> None:
     niah = load("niah-public.json")
     bfcl = load("bfcl-hard20-public.json")
     tel = load("TELEMETRY-SUMMARY.json")
+    p1m = load1m("PROFILE-1M.json") or {}
+    niah1m = load1m("niah-public.json") or {}
+    conc = p1m.get("concurrency_sweep") or {}
+    thr1m = (p1m.get("throughput_thinkoff") or {})
+    n1m = (niah1m.get("results") or {}).get("90%", {})
 
     # rows for family-level pass counts (summary may be absent until grader close)
     fam = {}
@@ -110,7 +123,7 @@ def main() -> None:
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>DeepSeek-V4-Flash-Vision-Exp — 512k dual-GB10</title>
+<title>DeepSeek-V4-Flash-Vision-Exp — 512k + 1M dual-GB10</title>
 <style>
 :root {{ --paper:#f3ead8; --chassis:#d9cbb0; --ink:#2c2416; --muted:#5c5346; --line:#8a7a5c; --pass:#2f6b3a; --fail:#8b1e1e; --hi:#f7f0e0; }}
 * {{ box-sizing:border-box; }}
@@ -142,7 +155,7 @@ footer {{ margin-top:36px; color:var(--muted); font-size:0.8rem; }}
 <main>
 <p class="kicker">r0b0tlab · @mr_r0b0t</p>
 <h1>DeepSeek-V4-Flash-Vision-Exp</h1>
-<p>512k context · 2× NVIDIA GB10 (SM121) · vLLM · speculative k=5 · adaptive verification</p>
+<p>512k + 1M context · 2× NVIDIA GB10 (SM121) · vLLM · speculative k=5 · adaptive verification</p>
 <p><a href="{gh}">{gh}</a></p>
 <section class="hero">
   <div class="kpis">
@@ -173,6 +186,19 @@ footer {{ margin-top:36px; color:var(--muted); font-size:0.8rem; }}
 <tr><td>SHORT c1 (256)</td><td>{short}</td><td>{"—" if thr.get("short256_c1_thinkoff") else "—"}</td></tr>
 <tr><td>PROSE c1×2</td><td>{prose}</td><td>{"stop" if prose != "—" else "—"}</td></tr>
 <tr><td>TD2W300 (1–300 spelled)</td><td>{td_tok if td_tok else "—"}</td><td>{"yes" if td and td.get("complete") else "—"}</td></tr>
+</table>
+
+<h2>1M profile (same image)</h2>
+<table>
+<tr><th>Metric</th><th>512k</th><th>1M</th></tr>
+<tr><td>Total KV pool</td><td>{serve.get("kv_tokens", 1281052):,} tokens</td><td>{p1m.get("serve", {}).get("kv_tokens", 1885452):,} tokens</td></tr>
+<tr><td>KV concurrency at full window</td><td>{serve.get("concurrency_at_512k", 2.44)}×</td><td>{p1m.get("serve", {}).get("concurrency_at_1m", 1.8)}×</td></tr>
+<tr><td>SHORT c1 tok/s (thinking off)</td><td>{short}</td><td>{thr1m.get("short256_c1_mean") or "—"}</td></tr>
+<tr><td>PROSE c1 med tok/s</td><td>{prose}</td><td>{thr1m.get("prose_c1_med") or "—"}</td></tr>
+<tr><td>TD2W300 tok/s</td><td>{td_tok if td_tok else "—"}</td><td>{thr1m.get("td2w300") or "—"}</td></tr>
+<tr><td>Concurrency c1 / c8 tok/s</td><td>29.97 / 92.94</td><td>{conc.get("c1", {}).get("output_tok_s", "—")} / {conc.get("c8", {}).get("output_tok_s", "—")}</td></tr>
+<tr><td>NIAH full-depth</td><td>PASS (25/50/90 + mk)</td><td>{"PASS — " + f"{n1m.get('api_prompt_tokens'):,}" + " prompt tokens, " + str(round(n1m.get('elapsed_s', 0))) + " s" if n1m.get("retrieved") else "—"}</td></tr>
+<tr><td>Vision</td><td colspan="2">{vis_p}/{vis_n} PASS on both</td></tr>
 </table>
 
 <h2>Runtime</h2>

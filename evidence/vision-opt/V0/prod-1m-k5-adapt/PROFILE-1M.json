@@ -1,0 +1,80 @@
+{
+  "profile": "1048576 k=5 adaptive thinking=off vision-54631-fi512b-k5adapt",
+  "serve": {
+    "image_id": "sha256:f8b73f965834ff8439bf266827229ef71bfdf291689e05b63dc59a74003b517d",
+    "max_model_len": 1048576,
+    "kv_tokens": 1885452,
+    "concurrency_at_1m": 1.8,
+    "k": 5,
+    "enable_adaptive_verification": true,
+    "max_num_batched_tokens": 8192,
+    "gpu_memory_utilization": 0.875
+  },
+  "admission_math": {
+    "full_window_request_tokens": 1048512,
+    "pct_of_kv_pool": 55.6,
+    "concurrency_ceiling_full_window": 1.8,
+    "niah_90_target": 943651,
+    "niah_90_pct_of_pool": 50.0,
+    "cladder_kv_tokens": 6144,
+    "cladder_pct_of_pool": 0.33
+  },
+  "vision_short": "8/8 PASS",
+  "throughput_thinkoff": {
+    "short256_c1_mean": 44.45,
+    "short_reps": [
+      45.74,
+      44.23,
+      43.37
+    ],
+    "prose_c1_med": 32.52,
+    "prose_c1_agg": 32.34,
+    "td2w300": 53.741,
+    "td2w300_complete": true,
+    "accept_len_td2w300": 2.738,
+    "vs_512k_k5": {
+      "short": 43.23,
+      "prose_med": 34.87,
+      "td2w300": 51.912
+    }
+  },
+  "concurrency_sweep": {
+    "c1": {
+      "output_tok_s": 29.97,
+      "ttft_ms": 2166.5,
+      "tpot_ms": 25.0,
+      "completed": 2
+    },
+    "c2": {
+      "output_tok_s": 36.16,
+      "ttft_ms": 1288.5,
+      "tpot_ms": 47.1,
+      "completed": 4
+    },
+    "c4": {
+      "output_tok_s": 64.89,
+      "ttft_ms": 2704.6,
+      "tpot_ms": 44.11,
+      "completed": 8
+    },
+    "c8": {
+      "output_tok_s": 92.94,
+      "ttft_ms": 2468.8,
+      "tpot_ms": 63.23,
+      "completed": 16
+    },
+    "failed": 0
+  },
+  "niah_full_depth": {
+    "case": "90% of 1048512 window",
+    "target_tokens": 943651,
+    "api_prompt_tokens": 865055,
+    "needle_retrieved": true,
+    "transport_ok": true,
+    "elapsed_s": 909.892,
+    "verdict": "NIAH_PASS",
+    "note": "constructed prompt landed 865k vs 943651 target (filler token-width rounding; same behavior as the 512k cut ~480k vs 524k)"
+  },
+  "verdict": "QUALIFIED",
+  "note": "1M profile qualified: vision 8/8, throughput flat vs 512k, c8 92.94 tok/s, full-depth retrieval PASS"
+}

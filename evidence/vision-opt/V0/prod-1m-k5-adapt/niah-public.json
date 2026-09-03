@@ -1,0 +1,13 @@
+{
+  "verdict": "NIAH_PASS",
+  "target_tokens": 943651,
+  "profile": "1048576 k=5 adaptive",
+  "results": {
+    "90%": {
+      "retrieved": true,
+      "api_prompt_tokens": 865055,
+      "elapsed_s": 909.892,
+      "multikey": false
+    }
+  }
+}

@@ -1,8 +1,8 @@
 # DeepSeek-V4-Flash-Vision-Exp · vLLM · dual GB10
 
-r0b0tlab (@mr_r0b0t). Vision + 512k context on 2× NVIDIA GB10 (SM121). Speculative decoding k=5 with adaptive verification, fp8 KV.
+r0b0tlab (@mr_r0b0t). Vision + long context on 2× NVIDIA GB10 (SM121). One image, two qualified profiles: **512k** and **1M** window, both speculative k=5 with adaptive verification, fp8 KV.
 
-Results: `publication/html/index.html`
+Results page: `publication/html/index.html`
 
 ## Click-run
 
@@ -21,18 +21,67 @@ Weights are not in the image. Place `deepseek-ai/DeepSeek-V4-Flash-Vision-Exp` o
 docker pull ghcr.io/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121:vision-54631-fi512b-k5adapt
 docker tag ghcr.io/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121:vision-54631-fi512b-k5adapt dsv4v-vllm:vision-54631-fi512b-k5adapt
 
-WORKER_SSH=user@rank1 HEAD_IP=<rank0-fabric-ip> \
-MAX_MODEL_LEN=524288 \
-bash scripts/run-vllm-vision-dual-gb10.sh
+# 512k profile
+WORKER_SSH=user@rank1 HEAD_IP=<rank0-fabric-ip> MAX_MODEL_LEN=524288 \
+  bash scripts/run-vllm-vision-dual-gb10.sh
+
+# 1M profile (same image; longer boot warmup)
+WORKER_SSH=user@rank1 HEAD_IP=<rank0-fabric-ip> MAX_MODEL_LEN=1048576 \
+  bash scripts/run-vllm-vision-dual-gb10.sh
 ```
 
-The launcher defaults are the production profile: k=5, `enable_adaptive_verification=true`, thinking off by default (quality clients send `thinking=true, reasoning_effort=high` per request), fp8 KV, FDO CUDA graphs, FlashInfer autotune with the fp4-block-scale MoE ops skipped.
+Launcher defaults are the production profile: k=5, `enable_adaptive_verification=true`, thinking off by default (quality clients send `thinking=true, reasoning_effort=high` per request), fp8 KV, FDO CUDA graphs, FlashInfer autotune with the fp4-block-scale MoE ops skipped. `VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0` skips the post-capture graph-memory profiling phase on slow boots.
 
 Vision gate:
 
 ```bash
 python3 scripts/vision_short_bench.py http://127.0.0.1:8000 deepseek-v4-flash-vision-exp
 ```
+
+## Measured profiles
+
+Both profiles: same image, k=5 adaptive, `max_num_batched_tokens=8192`, `gpu_memory_utilization=0.875`, TP=2 over 2×128 GB.
+
+### Memory / KV capacity
+
+| | 512k | 1M |
+|---|---|---|
+| max_model_len | 524,288 | 1,048,576 |
+| Total KV pool | **1,281,052 tokens** | **1,885,452 tokens** |
+| KV concurrency at full window | 2.44× | 1.80× |
+| Full-window request as % of pool | 41% | 56% |
+| Weights + non-torch per rank | ~82.4 GiB | ~82.4 GiB |
+| CUDA graphs | 0.41–2.43 GiB | 0.41–2.43 GiB |
+
+### Throughput (thinking off)
+
+| Lane | 512k | 1M |
+|---|---|---|
+| SHORT c1 (256 tok) | **43.23** tok/s | **44.45** tok/s |
+| PROSE c1 med (~600 tok) | **34.87** tok/s | **32.52** tok/s |
+| TD2W300 spelled 1–300 | 51.91 tok/s | 53.74 tok/s |
+| accept length (TD2W300) | 2.67 | 2.74 |
+| Concurrency c1 → c8 | 29.97 → 92.94 tok/s | 29.97 → 92.94 tok/s |
+
+c-ladder detail (1M profile, 512-in/256-out random, zero failures): c1 29.97 · c2 36.16 · c4 64.89 · c8 92.94 tok/s; TPOT 25.0 ms at c1 → 63.2 ms at c8. Decode throughput is flat across the window: SHORT at 1M matches 512k (44.45 vs 43.23).
+
+Reference: k=3 without adaptive was SHORT 32.15 / PROSE 31.32 — k=5 adaptive is +34% / +11% on SHORT/PROSE.
+
+### Quality (Q200v2 frozen set, thinking=high — 512k profile)
+
+- Q200v2 total **182/200 (91.0%)**
+- GSM8K 75/80 · HumanEval 39/40 (local subprocess) · IFEval 38/40 · hard reasoning 18/20 (manual)
+- BFCL-hard20 **12/20 thinking=high** (no low pinning)
+- Q200 e2e mean 37.03 / aggregate 36.81 tok/s (96,326 completion tokens, 43.7 min wall)
+
+### NIAH — PASS on both profiles
+
+- **512k (advertised 524,288):** 25/50/90% + multi-key 33/66 — all five retrieved the exact needle value (~480k constructed prompts, 385–429 s per case)
+- **1M (advertised 1,048,576):** full-depth 90% case retrieved the exact needle value — 865,055 prompt tokens, 910 s end-to-end (filler rounding lands constructed prompts below target, same as 512k; disclosed in the JSON)
+
+### Vision
+
+Synthetic 8-item exact-match gate: **8/8 PASS** on both profiles.
 
 ## Patches and modifications (official image → this runtime)
 
@@ -51,17 +100,16 @@ Start from the official per-model image `vllm/vllm-openai:deepseekv4-flash-visio
 
    Result: k=5 drafts 5 tokens every step (DSpark `n_predict=5`), and the target verifies only what the confidence head says it needs instead of all 5+1.
 
-4. **Launch profile** (`scripts/run-vllm-vision-dual-gb10.sh`): `enable_adaptive_verification=true` with k=5 (k=6 is illegal here — `num_speculative_tokens` must divide `dspark_block_size=5`), `VLLM_USE_BREAKABLE_CUDAGRAPH=0`, FDO graph capture sized to `max_num_seqs*(k+1)` rounded up to 8 (`[1,2,4,8,16,32,48]`), `--long-prefill-token-threshold 1024`, persistent Triton/TileLang/vLLM/FlashInfer JIT caches, `VLLM_FLASHINFER_AUTOTUNE_SKIP_OPS` limited to the fp4-block-scale MoE ops (autotune stays on), `VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS=1800`, and request-level `thinking_token_budget` on quality runs so reasoning cannot consume the whole `max_tokens`.
+4. **Launch profile** (`scripts/run-vllm-vision-dual-gb10.sh`): `enable_adaptive_verification=true` with k=5 (k=6 is illegal here — `num_speculative_tokens` must divide `dspark_block_size=5`), `VLLM_USE_BREAKABLE_CUDAGRAPH=0`, FDO graph capture sized to `max_num_seqs*(k+1)` rounded up to 8 (`[1,2,4,8,16,32,48]`), `--long-prefill-token-threshold 1024`, persistent Triton/TileLang/vLLM/FlashInfer JIT caches, `VLLM_FLASHINFER_AUTOTUNE_SKIP_OPS` limited to the fp4-block-scale MoE ops (autotune stays on), `VLLM_EXECUTE_MODEL_TIMEOUT_SECONDS=1800`, `--max-num-batched-tokens 8192` (16384 halves KV at long context), and request-level `thinking_token_budget` on quality runs so reasoning cannot consume the whole `max_tokens`.
 
 ## What was NOT taken
 
 - **B12X** (`flashinfer_b12x` / `VLLM_USE_B12X_MOE`): an NVFP4 expert path. This checkpoint is FP8 (`quant_method=fp8`); Spark `b12x` images also drop vision tensors.
-- **`nvfp4_ds_mla` KV**: not in this vLLM enum; the fp8 KV path is what admits 512k on 2×128 GB.
+- **`nvfp4_ds_mla` KV**: not in this vLLM enum; the fp8 KV path is what admits both 512k and 1M on 2×128 GB.
 - **Community DSpark recipes** (Anemll vision graft, k=6 MTP, NVFP4-KV patch series): measured on their own stacks; their k=6 rule is `n_predict=3` on a different image and does not transfer.
 
-## This cut
+## Evidence
 
-- max_model_len 524288 (KV 1,281,052 tokens, 2.44× concurrency at full window), k=5 adaptive, fp8 KV
-- Vision short 8/8
-- SHORT c1 think-off 43.23 tok/s · PROSE c1 med 34.87 · TD2W300 51.9 (complete)
-- Q200v2 quality + NIAH: see `publication/html/index.html` and `evidence/vision-opt/V0/prod-512k-k5-adapt/`
+- 512k profile: `evidence/vision-opt/V0/prod-512k-k5-adapt/`
+- 1M profile: `evidence/vision-opt/V0/prod-1m-k5-adapt/`
+- k=5 acceptance research chain: `evidence/vision-opt/V0/k5-accept/`

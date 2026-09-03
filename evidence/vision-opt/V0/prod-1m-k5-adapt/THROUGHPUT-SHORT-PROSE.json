@@ -1,0 +1,58 @@
+{
+  "short256_c1_thinkoff": {
+    "mean_tok_s": 44.45,
+    "reps": [
+      {
+        "dt": 5.597,
+        "ct": 256,
+        "tok_s": 45.74,
+        "finish": "length",
+        "has_content": true
+      },
+      {
+        "dt": 5.787,
+        "ct": 256,
+        "tok_s": 44.23,
+        "finish": "length",
+        "has_content": true
+      },
+      {
+        "dt": 5.902,
+        "ct": 256,
+        "tok_s": 43.37,
+        "finish": "length",
+        "has_content": true
+      }
+    ]
+  },
+  "prose_c1_x2_thinkoff": {
+    "results": [
+      {
+        "dt": 18.503,
+        "ct": 595,
+        "tok_s": 32.16,
+        "finish": "stop",
+        "has_content": true
+      },
+      {
+        "dt": 17.834,
+        "ct": 580,
+        "tok_s": 32.52,
+        "finish": "stop",
+        "has_content": true
+      }
+    ],
+    "wall": 36.34,
+    "aggregate_tok_s": 32.34,
+    "per_stream": [
+      32.16,
+      32.52
+    ],
+    "med": 32.52
+  },
+  "reference": {
+    "k5_512k_short": 43.23,
+    "k5_512k_prose_med": 34.87,
+    "k3_512k_floor_short_thinkhigh": 32.15
+  }
+}

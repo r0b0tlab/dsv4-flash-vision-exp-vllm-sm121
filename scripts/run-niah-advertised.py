@@ -188,6 +188,8 @@ def main():
     parser.add_argument("--output", required=True)
     parser.add_argument("--target-tokens", type=int, default=1048512,
                         help="default: 1048576 - 64 (advertised window minus headroom)")
+    parser.add_argument("--only", default="",
+                        help="comma-separated case labels to run (e.g. 90%%); others are skipped")
     args = parser.parse_args()
     base = args.base_url.rstrip("/")
     model = get_served_model(base)
@@ -214,6 +216,9 @@ def main():
         ("mk66", 0.66, True),
     ]
     for label, depth, mk in cases:
+        if args.only and label not in [x.strip() for x in args.only.split(",")]:
+            print(f"SKIP {label} (--only)", flush=True)
+            continue
         if label in document["results"]:
             print(f"SKIP existing {label}", flush=True)
             continue
@@ -233,11 +238,15 @@ def main():
         atomic_write(output, document)
         print(json.dumps(result, sort_keys=True, default=str), flush=True)
     results = document["results"]
-    complete = {"25%", "50%", "90%"}.issubset(set(results))
+    if args.only:
+        wanted = [x.strip() for x in args.only.split(",")]
+    else:
+        wanted = ["25%", "50%", "90%"]
+    complete = set(wanted).issubset(set(results))
     passed = complete and all(
-        bool(row.get("needle_retrieved")) for row in results.values()
+        bool(row.get("needle_retrieved")) for row in results.values() if row.get("label") in wanted
     )
-    document["verdict"] = "NIAH_PASS" if passed else "NIAH_FAIL"
+    document["verdict"] = ("NIAH_PASS" if passed else "NIAH_FAIL") + ("_PARTIAL" if args.only else "")
     document["eligible_count"] = sum(bool(r.get("transport_ok")) for r in results.values())
     document["semantic_pass_count"] = sum(
         bool(r.get("needle_retrieved")) for r in results.values()

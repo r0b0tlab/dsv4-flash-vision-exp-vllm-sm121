@@ -1,0 +1,30 @@
+{
+  "c1": {
+    "output_tok_s": 29.97,
+    "ttft_ms": 2166.5,
+    "tpot_ms": 25.0,
+    "completed": 2,
+    "failed": 0
+  },
+  "c2": {
+    "output_tok_s": 36.16,
+    "ttft_ms": 1288.5,
+    "tpot_ms": 47.1,
+    "completed": 4,
+    "failed": 0
+  },
+  "c4": {
+    "output_tok_s": 64.89,
+    "ttft_ms": 2704.6,
+    "tpot_ms": 44.11,
+    "completed": 8,
+    "failed": 0
+  },
+  "c8": {
+    "output_tok_s": 92.94,
+    "ttft_ms": 2468.8,
+    "tpot_ms": 63.23,
+    "completed": 16,
+    "failed": 0
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "pass": 8,
+  "fail": 0,
+  "n": 8,
+  "results": [
+    {
+      "id": "v-red-blue",
+      "ok": true,
+      "elapsed_s": 8.912673234939575,
+      "prompt_tokens": 216,
+      "completion_tokens": 41,
+      "e2e_tok_s": 4.600191089612854,
+      "snippet": "left=red; right=blue we need to identify colors of left and right halves. left half is red, right half is blue. reply exactly: left=red; right=blue."
+    },
+    {
+      "id": "v-solid-green",
+      "ok": true,
+      "elapsed_s": 3.9460337162017822,
+      "prompt_tokens": 225,
+      "completion_tokens": 153,
+      "e2e_tok_s": 38.773110166749596,
+      "snippet": "green 1.  **analyze the request:**\n    *   user provided an image.\n    *   user asks for the dominant color.\n    *   user specifies the answer must be exactly one word from: red, green, blue, black, or white.\n\n2.  **analyze the image:**\n   "
+    },
+    {
+      "id": "v-solid-white",
+      "ok": true,
+      "elapsed_s": 1.4477145671844482,
+      "prompt_tokens": 214,
+      "completion_tokens": 40,
+      "e2e_tok_s": 27.629755828037986,
+      "snippet": "white the user wants a one-word answer to whether the image is mostly white or mostly black.\nlooking at the image, it is a solid white square.\ntherefore, it is mostly white."
+    },
+    {
+      "id": "v-count-3",
+      "ok": true,
+      "elapsed_s": 5.283082723617554,
+      "prompt_tokens": 208,
+      "completion_tokens": 217,
+      "e2e_tok_s": 41.074503533688905,
+      "snippet": "3 1. **analyze the request:**\n    * the user is asking for the number of black filled circles in the provided image.\n    * the instruction is to reply with a single integer.\n\n2. **examine the image:**\n    * the image contains a white backgr"
+    },
+    {
+      "id": "v-digit-7",
+      "ok": true,
+      "elapsed_s": 1.9105110168457031,
+      "prompt_tokens": 219,
+      "completion_tokens": 64,
+      "e2e_tok_s": 33.498890838988956,
+      "snippet": "7 the user wants me to identify the digit shown in the image.\nthe image shows a black shape on a white background.\nthe shape consists of a horizontal line at the top and a diagonal line going down to the left.\nthis is the digit 7.\ni will re"
+    },
+    {
+      "id": "v-not-photo",
+      "ok": true,
+      "elapsed_s": 2.3641586303710938,
+      "prompt_tokens": 215,
+      "completion_tokens": 76,
+      "e2e_tok_s": 32.14674304154901,
+      "snippet": "no the user wants a yes/no answer to whether the image is a photograph of a real-world scene.\nthe image is a solid red square. it contains no photographic elements, no scene, no objects, no textures, and no depth. it is a flat, uniform colo"
+    },
+    {
+      "id": "v-blue-field",
+      "ok": true,
+      "elapsed_s": 4.329401016235352,
+      "prompt_tokens": 218,
+      "completion_tokens": 195,
+      "e2e_tok_s": 45.04087269087469,
+      "snippet": "blue 1.  **analyze the request:**\n    *   user provided an image.\n    *   user asks: \"what is the dominant color? reply with one word: red, green, or blue.\"\n    *   constraint: reply with exactly one word from the list: red, green, or blue."
+    },
+    {
+      "id": "v-split-again",
+      "ok": true,
+      "elapsed_s": 1.3866524696350098,
+      "prompt_tokens": 210,
+      "completion_tokens": 53,
+      "e2e_tok_s": 38.22154516765869,
+      "snippet": "right the user wants me to identify which side of the image is blue.\nlooking at the image, the left half is red and the right half is blue.\ntherefore, the blue side is on the right.\ni will reply with one word: right."
+    }
+  ]
+}
