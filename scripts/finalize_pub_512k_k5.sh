@@ -24,7 +24,7 @@ if src.exists():
     d = json.loads(src.read_text())
     pub = {"verdict": d.get("verdict"), "target_tokens": d.get("target_tokens")}
     pub["results"] = {
-        k: {k2: v.get(k2) for k2 in ("retrieved", "api_prompt_tokens", "elapsed_s", "multikey")}
+        k: {"retrieved": v.get("needle_retrieved"), "api_prompt_tokens": v.get("api_prompt_tokens"), "elapsed_s": v.get("elapsed_s"), "multikey": v.get("multikey")}
         for k, v in (d.get("results") or {}).items()
     }
     (ev / "niah-public.json").write_text(json.dumps(pub, indent=2) + "\n")
