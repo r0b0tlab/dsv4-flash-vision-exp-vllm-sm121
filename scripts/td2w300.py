@@ -10,10 +10,7 @@ import json
 import time
 import urllib.request
 
-PROMPT = (
-    "Count from 1 to 300. Spell out every number in English words. "
-    "Do not use digits. Separate numbers with spaces. Stop after three hundred."
-)
+PROMPT = "one two three four five. Continue through three hundred in English words, spaces only."
 
 
 def metrics(base: str) -> dict:
@@ -49,12 +46,14 @@ def main() -> int:
     p.add_argument("model")
     p.add_argument("--thinking", choices=("high", "off"), default="off")
     p.add_argument("--max-tokens", type=int, default=4096)
+    p.add_argument("--timeout", type=int, default=0)
     p.add_argument("--out", default="")
     a = p.parse_args()
+    http_timeout = a.timeout or max(600, int(a.max_tokens / 8) + 180)
     kwargs = (
         {"thinking": False}
         if a.thinking == "off"
-        else {"thinking": True, "reasoning_effort": "high"}
+        else {"thinking": True, "enable_thinking": True, "reasoning_effort": "high"}
     )
     body = {
         "model": a.model,
@@ -70,7 +69,7 @@ def main() -> int:
         data=json.dumps(body).encode(),
         headers={"Content-Type": "application/json"},
     )
-    with urllib.request.urlopen(req, timeout=600) as r:
+    with urllib.request.urlopen(req, timeout=http_timeout) as r:
         d = json.load(r)
     elapsed = time.time() - t0
     after = metrics(a.base)
@@ -81,9 +80,13 @@ def main() -> int:
     details = usage.get("completion_tokens_details") or {}
     rsn = int(details.get("reasoning_tokens") or 0)
     content = msg.get("content") or ""
+    reasoning = msg.get("reasoning") or msg.get("reasoning_content") or ""
+    listed = "three hundred" in content.lower()
     row = {
         "name": "TD2W300",
+        "prompt": PROMPT,
         "thinking": a.thinking,
+        "max_tokens": a.max_tokens,
         "elapsed_s": round(elapsed, 3),
         "prompt_tokens": pt,
         "completion_tokens": ct,
@@ -93,6 +96,11 @@ def main() -> int:
         "content_chars": len(content),
         "content_head": content[:180],
         "content_tail": content[-180:],
+        "reasoning_chars": len(reasoning),
+        "reasoning_head": reasoning[:180],
+        "reasoning_tail": reasoning[-180:],
+        "listed_three_hundred": listed,
+        "complete": bool(listed and d["choices"][0].get("finish_reason") == "stop"),
         "metrics_delta": {
             k: (after.get(k, 0) - before.get(k, 0)) for k in sorted(set(before) | set(after))
         },
