@@ -42,7 +42,8 @@ export Q200_BFCL_REGISTRY="${Q200_BFCL_REGISTRY:-qwen38-flash-next-hard20-FC}"
 export BFCL_NUM_THREADS=1
 export BFCL_HTTP_TIMEOUT=3600
 export BFCL_MAX_TOKENS=8192
-: > "${Q200_BFCL_TIMING_PATH}"
+# Do NOT pre-create the timing sidecar: run mode requires it absent.
+rm -f "${Q200_BFCL_TIMING_PATH}"
 python3 "${ROOT}/scripts/run_bfcl_hard20_dsv4.py" run \
   > "${EV}/bfcl-hard20.stdout" 2> "${EV}/bfcl-hard20.stderr"
 echo "BFCL_RC=$?"

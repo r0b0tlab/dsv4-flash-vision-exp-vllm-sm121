@@ -1,0 +1,287 @@
+{
+  "n": 40,
+  "passed": 39,
+  "failed": 1,
+  "results": [
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-000"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-001"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-002"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-003"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-004"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-005"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-006"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-007"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-008"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-009"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-010"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-011"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-012"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-013"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-014"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-015"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-016"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-017"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-018"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-019"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-020"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-021"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-022"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-023"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-024"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-025"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-026"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-027"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-028"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-029"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-030"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-031"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-032"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-033"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-034"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-035"
+    },
+    {
+      "passed": false,
+      "status": "failed",
+      "returncode": 1,
+      "stderr": "Traceback (most recent call last):\n  File \"/tmp/tmpge_wnlgz.py\", line 50, in <module>\n    check(fizz_buzz)\n  File \"/tmp/tmpge_wnlgz.py\", line 41, in check\n    assert candidate(78) == 2\n           ^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "id": "humaneval-036"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-037"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-038"
+    },
+    {
+      "passed": true,
+      "status": "scored",
+      "returncode": 0,
+      "stderr": "",
+      "id": "humaneval-039"
+    }
+  ]
+}

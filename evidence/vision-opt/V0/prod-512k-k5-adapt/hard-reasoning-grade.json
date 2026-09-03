@@ -1,0 +1,30 @@
+{
+  "family": "hard_reasoning",
+  "n": 20,
+  "passed": 18,
+  "failed": 2,
+  "ungraded": 0,
+  "grader": "manual_adjudication_vs_frozen_ref_and_math",
+  "rows": [
+    {"id": "hard-00", "passed": true, "note": "p^3-p divisible by 24 for every prime p>3 (factor into (p-1)p(p+1); p mod 3 = ±1 forces 3 | p^3-p, evens force 8). Matches ref intent."},
+    {"id": "hard-01", "passed": true, "note": "13/4 = 3.25 via gaps argument."},
+    {"id": "hard-02", "passed": true, "note": "Pairs (53,52),(19,16),(13,8),(11,4) — all satisfy x^2-y^2=105 (2809-2704, 361-256, 169-64, 121-16). Frozen ref's (15,12),(9,4) are wrong (225-144=81, 81-16=65)."},
+    {"id": "hard-03", "passed": true, "note": "Valid 5-sentence contradiction proof via evenness of a and b."},
+    {"id": "hard-04", "passed": true, "note": "1/6048000"},
+    {"id": "hard-05", "passed": true, "note": "V(n+1)=V(n)-4 -> 25 hours"},
+    {"id": "hard-06", "passed": true, "note": "binsearch Θ(log n), heapify Θ(n), BFS Θ(n), mergesort Θ(n log n), quicksort Θ(n^2)"},
+    {"id": "hard-07", "passed": true, "note": "3/10"},
+    {"id": "hard-08", "passed": false, "note": "Boxed 1. Frobenius 6*7-6-7=29. Wrong."},
+    {"id": "hard-09", "passed": true, "note": "3 remainder states, accept rem 0, MSB-first 2n+b transitions"},
+    {"id": "hard-10", "passed": true, "note": "2"},
+    {"id": "hard-11", "passed": true, "note": "f'(1)=1 via log-differentiation of x^(x^x)"},
+    {"id": "hard-12", "passed": true, "note": "True for finite graphs (pigeonhole walk -> cycle); infinite-path caveat correct."},
+    {"id": "hard-13", "passed": true, "note": "2/3"},
+    {"id": "hard-14", "passed": true, "note": "256"},
+    {"id": "hard-15", "passed": true, "note": "0"},
+    {"id": "hard-16", "passed": true, "note": "1/(2π) m"},
+    {"id": "hard-17", "passed": true, "note": "Look-and-say / Conway L operator on 1"},
+    {"id": "hard-18", "passed": true, "note": "4 half-squares, diagonal sqrt(2)/2"},
+    {"id": "hard-19", "passed": true, "note": "1/3"}
+  ]
+}

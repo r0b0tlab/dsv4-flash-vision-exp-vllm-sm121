@@ -1,0 +1,22 @@
+{
+  "profile": "524288 k=5 adaptive thinking=high vision-54631-fi512b-k5adapt",
+  "status_from_grader": "INCOMPLETE",
+  "rows": 180,
+  "correct_count": 113,
+  "incorrect_count": 7,
+  "ungraded_count": 20,
+  "grader_error_count": 40,
+  "e2e_tok_s": {
+    "n": 180,
+    "mean": 37.025135745940574,
+    "min": 12.069178441338357,
+    "max": 46.70620595091488,
+    "aggregate_completion_over_wall": 36.81483576210837
+  },
+  "campaign_wall_seconds": 2624.453644255991,
+  "local_graded": {
+    "humaneval_local_subprocess": "39/40",
+    "hard_reasoning_manual": "18/20"
+  },
+  "note": "thinking=high, thinking_token_budget=2048. k=5 adaptive. 512k."
+}

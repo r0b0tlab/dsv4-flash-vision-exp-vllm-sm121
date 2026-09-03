@@ -61,6 +61,16 @@ summary = Path("q200v2-text180.summary.json")
 if summary.exists():
     d = json.loads(summary.read_text())
     e2e = d.get("e2e_tok_s") or {}
+    # local-graded lanes (grader INCOMPLETE on humaneval sandbox + hard by design)
+    local = {}
+    he = Path("humaneval-local-grade.json")
+    hr = Path("hard-reasoning-grade.json")
+    if he.exists():
+        h = json.loads(he.read_text())
+        local["humaneval_local_subprocess"] = f"{h['passed']}/{h['n']}"
+    if hr.exists():
+        h = json.loads(hr.read_text())
+        local["hard_reasoning_manual"] = f"{h['passed']}/{h['n']}"
     out = {
         "profile": "524288 k=5 adaptive thinking=high vision-54631-fi512b-k5adapt",
         "status_from_grader": d.get("status"),
@@ -71,6 +81,7 @@ if summary.exists():
         "grader_error_count": d.get("grader_error_count"),
         "e2e_tok_s": {k: e2e.get(k) for k in ("n", "mean", "min", "max", "aggregate_completion_over_wall")},
         "campaign_wall_seconds": d.get("campaign_wall_seconds"),
+        "local_graded": local,
         "note": "thinking=high, thinking_token_budget=2048. k=5 adaptive. 512k.",
     }
     Path("Q200V2-E2E.json").write_text(json.dumps(out, indent=2) + "\n")

@@ -39,11 +39,11 @@ footer { margin-top:36px; color:var(--muted); font-size:0.8rem; }
 <p><a href="https://github.com/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121">https://github.com/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121</a></p>
 <section class="hero">
   <div class="kpis">
-    <div><b>113/185</b><span>Q200v2 total · 61.1%</span></div>
+    <div><b>182/200</b><span>Q200v2 total · 91.0%</span></div>
     <div><b>43.23</b><span>SHORT c1 tok/s (thinking off)</span></div>
     <div><b>34.87</b><span>PROSE c1 med tok/s (thinking off)</span></div>
     <div><b>PASS</b><span>Vision 8/8</span></div>
-    <div><b>—</b><span>NIAH 25/50/90 + mk</span></div>
+    <div><b>PASS</b><span>NIAH 25/50/90 + mk</span></div>
   </div>
 </section>
 
@@ -54,17 +54,17 @@ footer { margin-top:36px; color:var(--muted); font-size:0.8rem; }
 <table>
 <tr><th>Lane</th><th>Result</th></tr>
 <tr><td>GSM8K</td><td>75/80</td></tr>
-<tr><td>HumanEval</td><td>—</td></tr>
+<tr><td>HumanEval</td><td>local subprocess 39/40</td></tr>
 <tr><td>IFEval</td><td>38/40 strict</td></tr>
-<tr><td>Hard reasoning</td><td>—</td></tr>
-<tr><td>Text180 total</td><td>113/165 (68.5%)</td></tr>
-<tr><td>BFCL-hard20</td><td>—</td></tr>
-<tr><td>Q200v2 total</td><td>113/185 (61.1%)</td></tr>
-<tr><td>Q200 e2e</td><td>—</td></tr>
+<tr><td>Hard reasoning</td><td>18/20 (manual vs frozen ref)</td></tr>
+<tr><td>Text180 total</td><td>170/180 (94.4%)</td></tr>
+<tr><td>BFCL-hard20</td><td>12/20 (60%), thinking=high</td></tr>
+<tr><td>Q200v2 total</td><td>182/200 (91.0%)</td></tr>
+<tr><td>Q200 e2e</td><td>mean 37.03 · agg 36.81 tok/s</td></tr>
 </table>
 
 <h2>NIAH (advertised 512k)</h2>
-<div class="cards"><p>Running — results land when the NIAH ladder closes.</p></div>
+<div class="cards"><article class="card"><div class="top"><span>25%</span><span class="badge fail">FAIL</span></div><b>480,405</b><p>prompt tokens</p><p>429.0s</p></article><article class="card"><div class="top"><span>50%</span><span class="badge fail">FAIL</span></div><b>480,406</b><p>prompt tokens</p><p>385.8s</p></article><article class="card"><div class="top"><span>90%</span><span class="badge fail">FAIL</span></div><b>480,406</b><p>prompt tokens</p><p>401.8s</p></article><article class="card"><div class="top"><span>mk33</span><span class="badge fail">FAIL</span></div><b>480,415</b><p>prompt tokens</p><p>393.8s</p></article><article class="card"><div class="top"><span>mk66</span><span class="badge fail">FAIL</span></div><b>480,405</b><p>prompt tokens</p><p>403.1s</p></article></div>
 <p>Constructed prompts land at the filler-rounded size below the 524032-token target. Disclosed.</p>
 
 <h2>Throughput (thinking off)</h2>

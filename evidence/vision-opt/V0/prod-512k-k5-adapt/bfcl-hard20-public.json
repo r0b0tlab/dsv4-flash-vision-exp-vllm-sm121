@@ -1,0 +1,11 @@
+{
+  "status": "SCORED",
+  "family": "bfcl_hard20",
+  "score": {
+    "accuracy": 0.6,
+    "correct_count": 12,
+    "incorrect_count": 8,
+    "total_count": 20
+  },
+  "thinking": "high"
+}
