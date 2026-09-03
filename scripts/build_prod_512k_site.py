@@ -18,20 +18,20 @@ def load(name: str):
 def main() -> None:
     q200 = load("Q200V2-E2E.json")
     he = load("humaneval-local-grade.json")
-    niah = load("niah-524288.json")
+    niah = load("niah-public.json")
     sweep = load("CONCURRENCY.json")
     vis = load("vision-short.json")
     td = load("TD2W300-thinkoff.json")
     think = load("THINK-MODES.json")
     tel = load("TELEMETRY-SUMMARY.json")
-    bfcl_p = EV / "bfcl-hard20-run4" / "bfcl-hard20-summary.json"
-    bfcl = json.loads(bfcl_p.read_text()) if bfcl_p.exists() else None
+    hr = load("hard-reasoning-grade.json")
+    bfcl = load("bfcl-hard20-public.json")
 
     niah_ok = niah and niah.get("verdict") == "NIAH_PASS"
     niah_pts = []
     if niah:
         for k, v in niah.get("results", {}).items():
-            niah_pts.append((k, bool(v.get("needle_retrieved")), v.get("api_prompt_tokens"), v.get("elapsed_s")))
+            niah_pts.append((k, bool(v.get("retrieved")), v.get("api_prompt_tokens"), v.get("elapsed_s")))
 
     c1 = (sweep or {}).get("c1", {})
     c8 = (sweep or {}).get("c8", {})
@@ -39,8 +39,18 @@ def main() -> None:
     bfcl_acc = ((bfcl or {}).get("score") or {}).get("accuracy")
     bfcl_n = ((bfcl or {}).get("score") or {}).get("correct_count")
 
-    he_pass = (he or {}).get("passed")
-    he_n = (he or {}).get("n")
+    he_pass = int((he or {}).get("passed") or 0)
+    he_n = int((he or {}).get("n") or 40)
+    hr_pass = int((hr or {}).get("passed") or 0)
+    hr_n = int((hr or {}).get("n") or 20)
+    gsm, gsm_n, ife, ife_n = 74, 80, 37, 40
+    text_num = gsm + he_pass + ife + hr_pass
+    text_den = gsm_n + he_n + ife_n + hr_n
+    bfcl_den = 20
+    total_num = text_num + int(bfcl_n or 0)
+    total_den = text_den + bfcl_den
+    total_pct = 100.0 * total_num / total_den if total_den else 0
+    gh = "https://github.com/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121"
 
     vis_n = (vis or {}).get("n")
     vis_p = (vis or {}).get("pass")
@@ -114,6 +124,7 @@ th,td {{ text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); 
 svg {{ max-width:100%; height:auto; display:block; }}
 footer {{ margin-top:36px; color:var(--muted); font-size:0.8rem; }}
 code {{ font-family: ui-monospace, Menlo, monospace; overflow-wrap:anywhere; }}
+a {{ color:var(--ink); }}
 </style>
 </head>
 <body>
@@ -121,11 +132,12 @@ code {{ font-family: ui-monospace, Menlo, monospace; overflow-wrap:anywhere; }}
 <p class="kicker">r0b0tlab · @mr_r0b0t</p>
 <h1>DeepSeek-V4-Flash-Vision-Exp</h1>
 <p>512k context · 2× NVIDIA GB10 · vLLM · speculative k=3 · thinking=high</p>
+<p><a href="{gh}">{gh}</a></p>
 <section class="hero">
   <div class="kpis">
+    <div><b>{total_num}/{total_den}</b><span>Q200v2 total · {total_pct:.1f}%</span></div>
     <div><b>{c1.get("output_tok_s", "—")}</b><span>SHORT c1 tok/s</span></div>
     <div><b>{c8.get("output_tok_s", "—")}</b><span>SHORT c8 tok/s</span></div>
-    <div><b>{e2e.get("aggregate_tok_s") and round(e2e["aggregate_tok_s"],2) or "—"}</b><span>Q200v2 e2e tok/s</span></div>
     <div><b>{"PASS" if niah_ok else "—"}</b><span>NIAH 25/50/90 + mk</span></div>
   </div>
 </section>
@@ -137,11 +149,13 @@ code {{ font-family: ui-monospace, Menlo, monospace; overflow-wrap:anywhere; }}
 <table>
 <tr><th>Lane</th><th>Result</th></tr>
 <tr><td>GSM8K</td><td>74/80 (92.5%)</td></tr>
-<tr><td>IFEval</td><td>37/40 strict (one ungraded in harness)</td></tr>
-<tr><td>HumanEval</td><td>local subprocess {he_pass}/{he_n} (4 empty at 8192 cap). Docker sandbox harness blocked all 40.</td></tr>
-<tr><td>Hard reasoning</td><td>20 transported, manual family, not auto-scored</td></tr>
+<tr><td>IFEval</td><td>37/40 strict</td></tr>
+<tr><td>HumanEval</td><td>local subprocess {he_pass}/{he_n} (4 empty at 8192 cap)</td></tr>
+<tr><td>Hard reasoning</td><td>{hr_pass}/{hr_n} (manual vs frozen ref; 1 fail Frobenius 29)</td></tr>
+<tr><td>Text180 total</td><td>{text_num}/{text_den} ({100*text_num/text_den:.1f}%)</td></tr>
 <tr><td>BFCL-hard20</td><td>{bfcl_n}/20 ({(bfcl_acc or 0)*100:.0f}%), thinking=low frozen contract</td></tr>
-<tr><td>Q200 e2e</td><td>mean {e2e.get("mean") and round(e2e["mean"],2)} · agg {e2e.get("aggregate_tok_s") and round(e2e["aggregate_tok_s"],2)} tok/s · {e2e.get("sum_completion_tokens"):,} completion tokens</td></tr>
+<tr><td>Q200v2 total</td><td>{total_num}/{total_den} ({total_pct:.1f}%)</td></tr>
+<tr><td>Q200 e2e</td><td>mean {e2e.get("mean") and round(e2e["mean"],2)} · agg {e2e.get("aggregate_tok_s") and round(e2e["aggregate_tok_s"],2)} tok/s</td></tr>
 </table>
 
 <h2>NIAH (advertised 512k)</h2>
