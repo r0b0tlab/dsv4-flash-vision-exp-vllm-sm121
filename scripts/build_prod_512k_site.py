@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Generate sanitized beige-retro results page from prod-512k-k3 JSON. No PII."""
+"""Generate sanitized beige-retro results page from prod-512k-k5-adapt JSON. No PII.
+
+Reads evidence/vision-opt/V0/prod-512k-k5-adapt/ and writes
+publication/html/index.html. Lanes that have not landed yet render as "—"
+placeholders so the page can be rebuilt the moment eval JSONs appear.
+"""
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[1]
-EV = _REPO / "evidence/vision-opt/V0/prod-512k-k3"
+EV = _REPO / "evidence/vision-opt/V0/prod-512k-k5-adapt"
 OUT = _REPO / "publication/html/index.html"
 
 
@@ -15,74 +20,70 @@ def load(name: str):
     return json.loads(p.read_text()) if p.exists() else None
 
 
+def quality_counts(rows):
+    """Count scored outcomes per family from the q200 rows jsonl."""
+    from collections import Counter
+
+    c = Counter()
+    for r in rows:
+        fam = r.get("family")
+        if fam:
+            c[fam] += 1
+            c[f"{fam}_pass"] += 1 if r.get("passed") is True else 0
+    return c
+
+
 def main() -> None:
-    q200 = load("Q200V2-E2E.json")
-    he = load("humaneval-local-grade.json")
-    niah = load("niah-public.json")
-    sweep = load("CONCURRENCY.json")
-    vis = load("vision-short.json")
+    serve = load("SERVE-IDENTITY.json") or {}
+    vis = load("VISION.json") or {}
+    thr = load("THROUGHPUT-SHORT-PROSE.json") or {}
     td = load("TD2W300-thinkoff.json")
-    think = load("THINK-MODES.json")
-    tel = load("TELEMETRY-SUMMARY.json")
+    qsummary = load("q200v2-text180.summary.json")
+    he = load("humaneval-local-grade.json")
     hr = load("hard-reasoning-grade.json")
+    niah = load("niah-public.json")
     bfcl = load("bfcl-hard20-public.json")
+    tel = load("TELEMETRY-SUMMARY.json")
 
-    niah_ok = niah and niah.get("verdict") == "NIAH_PASS"
-    niah_pts = []
-    if niah:
-        for k, v in niah.get("results", {}).items():
-            niah_pts.append((k, bool(v.get("retrieved")), v.get("api_prompt_tokens"), v.get("elapsed_s")))
+    # rows for family-level pass counts (summary may be absent until grader close)
+    fam = {}
+    rows_p = EV / "q200v2-text180.rows.jsonl"
+    if rows_p.exists():
+        fam = quality_counts([json.loads(l) for l in rows_p.read_text().splitlines() if l.strip()])
 
-    c1 = (sweep or {}).get("c1", {})
-    c8 = (sweep or {}).get("c8", {})
-    e2e = (q200 or {}).get("e2e_tok_s") or {}
+    gsm_n = fam.get("gsm8k", 80)
+    gsm_p = fam.get("gsm8k_pass")
+    ife_n = fam.get("ifeval", 40)
+    ife_p = fam.get("ifeval_pass")
+    he_pass = int((he or {}).get("passed") or fam.get("humaneval_pass") or 0)
+    he_n = int((he or {}).get("n") or fam.get("humaneval") or 40)
+    hr_pass = int((hr or {}).get("passed") or fam.get("hard_reasoning_pass") or 0)
+    hr_n = int((hr or {}).get("n") or fam.get("hard_reasoning") or 20)
+    text_num = (gsm_p or 0) + he_pass + (ife_p or 0) + hr_pass
+    text_den = gsm_n + he_n + ife_n + hr_n
+
     bfcl_acc = ((bfcl or {}).get("score") or {}).get("accuracy")
     bfcl_n = ((bfcl or {}).get("score") or {}).get("correct_count")
-
-    he_pass = int((he or {}).get("passed") or 0)
-    he_n = int((he or {}).get("n") or 40)
-    hr_pass = int((hr or {}).get("passed") or 0)
-    hr_n = int((hr or {}).get("n") or 20)
-    gsm, gsm_n, ife, ife_n = 74, 80, 37, 40
-    text_num = gsm + he_pass + ife + hr_pass
-    text_den = gsm_n + he_n + ife_n + hr_n
-    bfcl_den = 20
     total_num = text_num + int(bfcl_n or 0)
-    total_den = text_den + bfcl_den
+    total_den = text_den + 20
     total_pct = 100.0 * total_num / total_den if total_den else 0
+
+    e2e = (qsummary or {}).get("e2e_tok_s") or {}
+    niah_ok = bool(niah) and niah.get("verdict") == "NIAH_PASS"
+    niah_pts = []
+    if niah:
+        for k, v in (niah.get("results") or {}).items():
+            niah_pts.append((k, bool(v.get("retrieved")), v.get("api_prompt_tokens"), v.get("elapsed_s")))
+
+    short = (thr.get("short256_c1_thinkoff") or {}).get("mean_tok_s") or "—"
+    prose = ((thr.get("prose_c1_x2_thinkoff") or {}).get("med")) or "—"
+    td_tok = td.get("output_tok_s") if td else None
+
+    vis_p = vis.get("pass")
+    vis_n = vis.get("n") or 8
+
     gh = "https://github.com/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121"
-
-    vis_n = (vis or {}).get("n")
-    vis_p = (vis or {}).get("pass")
-
-    bars = []
-    if sweep:
-        for k in ("c1", "c2", "c4", "c8"):
-            if k in sweep:
-                bars.append((k, sweep[k]["output_tok_s"]))
-    mx = max((b[1] for b in bars), default=1) or 1
-
-    def bar_svg():
-        if not bars:
-            return ""
-        w, h, pad = 640, 180, 28
-        bw = (w - pad * 2) / len(bars) * 0.55
-        gap = (w - pad * 2) / len(bars)
-        parts = [f'<svg viewBox="0 0 {w} {h}" width="100%" role="img" aria-label="concurrency throughput">']
-        for i, (lab, val) in enumerate(bars):
-            x = pad + i * gap + (gap - bw) / 2
-            bh = (val / mx) * (h - 50)
-            y = h - 28 - bh
-            parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bw:.1f}" height="{bh:.1f}" fill="#2f6b3a"/>')
-            parts.append(f'<text x="{x+bw/2:.1f}" y="{y-6:.1f}" text-anchor="middle" fill="#2c2416" font-size="13">{val:.1f}</text>')
-            parts.append(f'<text x="{x+bw/2:.1f}" y="{h-10}" text-anchor="middle" fill="#5c5346" font-size="12">{lab}</text>')
-        parts.append("</svg>")
-        return "\n".join(parts)
-
-    think_rows = ""
-    if think:
-        for row in think:
-            think_rows += f"<tr><td>{row['label']}</td><td>{row['mean_tok_s']:.2f}</td></tr>"
+    image_id = serve.get("image_id", "sha256:f8b73f965834ff8439bf266827229ef71bfdf291689e05b63dc59a74003b517d")
 
     niah_cards = ""
     for lab, ok, pt, el in niah_pts:
@@ -92,6 +93,17 @@ def main() -> None:
             f'<span class="badge {"pass" if ok else "fail"}">{badge}</span></div>'
             f"<b>{pt:,}</b><p>prompt tokens</p><p>{el:.1f}s</p></article>"
         )
+    if not niah_pts:
+        niah_cards = '<p>Running — results land when the NIAH ladder closes.</p>'
+
+    quality_rows = f"""<tr><td>GSM8K</td><td>{f"{gsm_p}/{gsm_n}" if gsm_p is not None else "—"}</td></tr>
+<tr><td>HumanEval</td><td>{f"local subprocess {he_pass}/{he_n}" if he else "—"}</td></tr>
+<tr><td>IFEval</td><td>{f"{ife_p}/{ife_n} strict" if ife_p is not None else "—"}</td></tr>
+<tr><td>Hard reasoning</td><td>{f"{hr_pass}/{hr_n} (manual vs frozen ref)" if hr else "—"}</td></tr>
+<tr><td>Text180 total</td><td>{f"{text_num}/{text_den} ({100*text_num/text_den:.1f}%)" if text_den else "—"}</td></tr>
+<tr><td>BFCL-hard20</td><td>{f"{bfcl_n}/20 ({(bfcl_acc or 0)*100:.0f}%), thinking=high" if bfcl else "—"}</td></tr>
+<tr><td>Q200v2 total</td><td>{total_num}/{total_den} ({total_pct:.1f}%)</td></tr>
+<tr><td>Q200 e2e</td><td>{f"mean {round(e2e['mean'],2)} · agg {round(e2e['aggregate_completion_over_wall'] or e2e.get('aggregate_tok_s') or 0,2)} tok/s" if e2e.get("mean") else "—"}</td></tr>"""
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -121,23 +133,23 @@ h2 {{ font: 700 1.05rem/1.2 ui-monospace, Menlo, monospace; margin: 28px 0 10px;
 .badge.pass {{ color:var(--pass); }} .badge.fail {{ color:var(--fail); }}
 table {{ width:100%; border-collapse:collapse; font: 0.9rem ui-monospace, Menlo, monospace; }}
 th,td {{ text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }}
-svg {{ max-width:100%; height:auto; display:block; }}
-footer {{ margin-top:36px; color:var(--muted); font-size:0.8rem; }}
 code {{ font-family: ui-monospace, Menlo, monospace; overflow-wrap:anywhere; }}
 a {{ color:var(--ink); }}
+footer {{ margin-top:36px; color:var(--muted); font-size:0.8rem; }}
 </style>
 </head>
 <body>
 <main>
 <p class="kicker">r0b0tlab · @mr_r0b0t</p>
 <h1>DeepSeek-V4-Flash-Vision-Exp</h1>
-<p>512k context · 2× NVIDIA GB10 · vLLM · speculative k=3 · thinking=high</p>
+<p>512k context · 2× NVIDIA GB10 (SM121) · vLLM · speculative k=5 · adaptive verification</p>
 <p><a href="{gh}">{gh}</a></p>
 <section class="hero">
   <div class="kpis">
-    <div><b>{total_num}/{total_den}</b><span>Q200v2 total · {total_pct:.1f}%</span></div>
-    <div><b>{c1.get("output_tok_s", "—")}</b><span>SHORT c1 tok/s</span></div>
-    <div><b>{c8.get("output_tok_s", "—")}</b><span>SHORT c8 tok/s</span></div>
+    <div><b>{f"{total_num}/{total_den}" if total_den else "—"}</b><span>Q200v2 total · {total_pct:.1f}%</span></div>
+    <div><b>{short}</b><span>SHORT c1 tok/s (thinking off)</span></div>
+    <div><b>{prose}</b><span>PROSE c1 med tok/s (thinking off)</span></div>
+    <div><b>{"PASS" if vis_p == vis_n else "—"}</b><span>Vision {vis_p}/{vis_n}</span></div>
     <div><b>{"PASS" if niah_ok else "—"}</b><span>NIAH 25/50/90 + mk</span></div>
   </div>
 </section>
@@ -145,49 +157,39 @@ a {{ color:var(--ink); }}
 <h2>Vision</h2>
 <p>Synthetic 8-item exact-match gate: <b>{vis_p}/{vis_n} PASS</b>.</p>
 
-<h2>Quality (qwen38 Q200v2 frozen set)</h2>
+<h2>Quality (qwen38 Q200v2 frozen set, thinking=high)</h2>
 <table>
 <tr><th>Lane</th><th>Result</th></tr>
-<tr><td>GSM8K</td><td>74/80 (92.5%)</td></tr>
-<tr><td>IFEval</td><td>37/40 strict</td></tr>
-<tr><td>HumanEval</td><td>local subprocess {he_pass}/{he_n} (4 empty at 8192 cap)</td></tr>
-<tr><td>Hard reasoning</td><td>{hr_pass}/{hr_n} (manual vs frozen ref; 1 fail Frobenius 29)</td></tr>
-<tr><td>Text180 total</td><td>{text_num}/{text_den} ({100*text_num/text_den:.1f}%)</td></tr>
-<tr><td>BFCL-hard20</td><td>{bfcl_n}/20 ({(bfcl_acc or 0)*100:.0f}%), thinking=low frozen contract</td></tr>
-<tr><td>Q200v2 total</td><td>{total_num}/{total_den} ({total_pct:.1f}%)</td></tr>
-<tr><td>Q200 e2e</td><td>mean {e2e.get("mean") and round(e2e["mean"],2)} · agg {e2e.get("aggregate_tok_s") and round(e2e["aggregate_tok_s"],2)} tok/s</td></tr>
+{quality_rows}
 </table>
 
 <h2>NIAH (advertised 512k)</h2>
 <div class="cards">{niah_cards}</div>
-<p>Constructed prompts landed ~480k vs 524032 target (filler rounding). Disclosed.</p>
+<p>Constructed prompts land at the filler-rounded size below the 524032-token target. Disclosed.</p>
 
-<h2>Throughput</h2>
-{bar_svg()}
+<h2>Throughput (thinking off)</h2>
 <table>
-<tr><th>c</th><th>tok/s</th><th>TTFT ms</th><th>TPOT ms</th></tr>
-{"".join(f"<tr><td>{k}</td><td>{v['output_tok_s']}</td><td>{v['ttft_ms']}</td><td>{v['tpot_ms']}</td></tr>" for k,v in (sweep or {}).items())}
+<tr><th>Lane</th><th>tok/s</th><th>complete</th></tr>
+<tr><td>SHORT c1 (256)</td><td>{short}</td><td>{"—" if thr.get("short256_c1_thinkoff") else "—"}</td></tr>
+<tr><td>PROSE c1×2</td><td>{prose}</td><td>{"stop" if prose != "—" else "—"}</td></tr>
+<tr><td>TD2W300 (1–300 spelled)</td><td>{td_tok if td_tok else "—"}</td><td>{"yes" if td and td.get("complete") else "—"}</td></tr>
 </table>
-<p>TD2W300 spelled 1–300: {td.get("output_tok_s") if td else "—"} tok/s.</p>
-
-<h2>Thinking modes (short, 256 tok)</h2>
-<table><tr><th>effort</th><th>mean tok/s</th></tr>{think_rows}</table>
-<p>Production default remains high. low/max filled the 256 budget in reasoning on this probe.</p>
 
 <h2>Runtime</h2>
 <table>
-<tr><td>Image</td><td><code>dsv4v-vllm:vision-54631-fi512b</code> sha256:c4c0d7b269b2… arm64</td></tr>
+<tr><td>Image</td><td><code>vision-54631-fi512b-k5adapt</code> {image_id[:19]}… arm64</td></tr>
+<tr><td>GHCR</td><td><code>ghcr.io/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121:vision-54631-fi512b-k5adapt</code></td></tr>
 <tr><td>max_model_len</td><td>524288</td></tr>
-<tr><td>KV</td><td>fp8 · 1,180,458 tokens · 2.25× at 512k</td></tr>
-<tr><td>Spec</td><td>k=3 probabilistic · adaptive off</td></tr>
-<tr><td>Graphs</td><td>FULL_DECODE_ONLY [1,2,4,8]</td></tr>
-<tr><td>Telemetry</td><td>{tel and tel.get("samples")} samples · mean {tel and tel.get("mean_w")} W · mean util {tel and tel.get("mean_util")}%</td></tr>
+<tr><td>KV</td><td>fp8 · {serve.get("kv_tokens", "1,281,052"):,} tokens · {serve.get("concurrency_at_512k", 2.44)}× at 512k</td></tr>
+<tr><td>Spec</td><td>k=5 probabilistic · adaptive verification on (SM121 overlay)</td></tr>
+<tr><td>Graphs</td><td>FULL_DECODE_ONLY [1,2,4,8,16,32,48]</td></tr>
+<tr><td>Telemetry</td><td>{f"{tel.get('samples')} samples · mean {tel.get('mean_w')} W · mean util {tel.get('mean_util')}%" if tel else "—"}</td></tr>
 </table>
 
 <h2>Appendix</h2>
-<p>A.1 HumanEval docker sandbox returned HARNESS_BLOCK on this image id; scores above are local subprocess+timeout.</p>
-<p>A.2 BFCL-hard20 frozen contract uses thinking=low; text180 used thinking=high.</p>
-<p>A.3 k=5 counting ceiling is not this profile. Official vision recipe publishes k=3.</p>
+<p>A.1 HumanEval graded locally via subprocess+timeout (docker sandbox HARNESS_BLOCK on this image id).</p>
+<p>A.2 All quality lanes run thinking=high with thinking_token_budget=2048; throughput lanes run thinking=off.</p>
+<p>A.3 k=6 is illegal on this image (num_speculative_tokens must divide dspark_block_size=5).</p>
 <p>A.4 No private IPs, hostnames, or local paths on this page.</p>
 <footer>r0b0tlab — @mr_r0b0t</footer>
 </main>

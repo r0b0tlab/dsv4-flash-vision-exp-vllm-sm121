@@ -1,0 +1,23 @@
+{
+  "checkpoint": {
+    "tensor": "mtp.2.confidence_head.proj.weight",
+    "file": "model-00048-of-00048.safetensors",
+    "shape": [1, 4352],
+    "dtype": "bfloat16",
+    "matches_hidden_plus_markov": true,
+    "hidden_plus_markov": "4096+256=4352"
+  },
+  "config": {
+    "enable_confidence_head": null,
+    "code_default_if_missing": true,
+    "confidence_head_with_markov": null,
+    "dspark_markov_rank": 256,
+    "dspark_block_size": 5
+  },
+  "loader": {
+    "boot": "DSpark draft model loaded: 100 params",
+    "remap": "mtp.{i}.confidence_head.* -> model.confidence_head.* when module is not None",
+    "inferred": "module constructed (default True); tensor name and shape match DSparkConfidenceHead(proj Linear(4352,1)); likely loaded. Live nn.Module not inspectable from a sidecar python."
+  },
+  "adaptive_without_this_tensor": "speculator.py asserts confidence_head is not None when enable_adaptive_verification=true"
+}

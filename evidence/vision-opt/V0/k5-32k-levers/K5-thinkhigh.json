@@ -1,0 +1,29 @@
+{
+  "serve": {
+    "image": "dsv4v-vllm:vision-54631-fi512b",
+    "max_model_len": 32768,
+    "k": 5,
+    "thinking_default": "high",
+    "breakable": 0,
+    "long_prefill_token_threshold": 1024,
+    "capture_sizes": [1, 2, 4, 8, 16, 32, 48],
+    "kv_tokens": 106233,
+    "concurrency_at_32k": 3.24,
+    "vision_short": "8/8 PASS"
+  },
+  "short256_c1": {
+    "mean_tok_s": 26.51,
+    "reps": [24.5, 27.05, 27.99],
+    "k3_32k_floor": 32.15,
+    "delta_pct": -17.5,
+    "verdict": "NO_WIN"
+  },
+  "prose_c1_x2": {
+    "aggregate_tok_s": 20.46,
+    "per_stream_med": 27.73,
+    "k3_prose_floor": 31.32,
+    "delta_pct": -11.5,
+    "verdict": "NO_WIN"
+  },
+  "note": "Same NO_WIN as prior k=5 32k think-high (26.77 / 27.71). New levers did not close the gap."
+}

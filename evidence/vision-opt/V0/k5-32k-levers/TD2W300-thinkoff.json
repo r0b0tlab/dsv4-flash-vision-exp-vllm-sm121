@@ -1,0 +1,17 @@
+{
+  "name": "TD2W300",
+  "thinking": "off",
+  "k": 5,
+  "max_model_len": 32768,
+  "elapsed_s": 17.41,
+  "completion_tokens": 911,
+  "output_tok_s": 52.326,
+  "finish_reason": "stop",
+  "complete": true,
+  "listed_three_hundred": true,
+  "accept_rate": 0.713,
+  "vs_k3_512k_thinkoff": {
+    "k3_tok_s": 55.137,
+    "delta_pct": -5.1
+  }
+}

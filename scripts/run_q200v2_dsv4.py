@@ -32,8 +32,8 @@ def validate_high(chat_kwargs):
     values = dict(chat_kwargs)
     if values.get("enable_thinking") is not True or values.get("thinking") is not True:
         raise ValueError("Q200 DSV4 requires thinking=true")
-    if values.get("reasoning_effort") not in ("high", "low", "max"):
-        raise ValueError("reasoning_effort must be high|low|max")
+    if values.get("reasoning_effort") != "high":
+        raise ValueError("Q200 DSV4 quality requires reasoning_effort=high")
     return values
 
 
@@ -73,6 +73,15 @@ def main() -> int:
     q.validate_native_thinking = validate_high
     q.chat = chat_dsv4
     q.DEFAULT_CHAT_KWARGS = {"enable_thinking": True, "thinking": True, "reasoning_effort": "high"}
+    _orig_payload = q._request_payload
+
+    def _request_payload(model, prompt, max_tokens, chat_kwargs):
+        payload = _orig_payload(model, prompt, max_tokens, chat_kwargs)
+        if dict(chat_kwargs).get("thinking") is True:
+            payload["thinking_token_budget"] = 2048
+        return payload
+
+    q._request_payload = _request_payload
     dataset = str(RUNNER / "artifacts" / "quality-text-180-v2.jsonl")
     t0 = time.perf_counter()
     summary = q.run_quality(

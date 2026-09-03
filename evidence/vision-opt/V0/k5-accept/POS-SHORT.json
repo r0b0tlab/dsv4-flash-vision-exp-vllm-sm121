@@ -1,0 +1,28 @@
+{
+  "request": {
+    "elapsed_s": 10.059,
+    "completion_tokens": 256,
+    "output_tok_s": 25.45,
+    "finish": "length",
+    "content_chars": 0
+  },
+  "metrics": {
+    "drafts": 117.0,
+    "accepted": 138.0,
+    "accept_len": 1.179,
+    "per_pos": {
+      "0": 74.0,
+      "1": 39.0,
+      "2": 17.0,
+      "3": 6.0,
+      "4": 2.0
+    },
+    "per_pos_frac_of_drafts": {
+      "0": 0.6325,
+      "1": 0.3333,
+      "2": 0.1453,
+      "3": 0.0513,
+      "4": 0.0171
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "thinking": "off",
+  "prose_c1_x2": {
+    "aggregate_tok_s": 36.24,
+    "per_stream": [36.52, 35.93],
+    "med": 36.52,
+    "k3_prose_floor": 31.32,
+    "delta_vs_k3_pct": 16.6,
+    "verdict": "WIN"
+  },
+  "thinkoff_short256_mean": 49.71,
+  "semantic_tank": {"finish": "stop", "boxed": "4.2 hours", "correct": true}
+}

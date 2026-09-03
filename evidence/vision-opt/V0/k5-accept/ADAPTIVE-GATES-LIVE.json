@@ -1,0 +1,18 @@
+{
+  "live_call": "docker exec dsv4v_vllm, DeviceCapability(12,1)",
+  "gate1_indexer_device_query_lens": {
+    "_supports_varlen_paged_mqa_logits": false,
+    "_supports_flattened_device_query_lens": false,
+    "DeepseekV4IndexerBackend.supports_device_cpu_query_lens_mismatch": false,
+    "DeepseekV32IndexerBackend.supports_device_cpu_query_lens_mismatch": false,
+    "first_adaptive_ValueError": "Adaptive verification trims verification requests on device, which the DEEPSEEK_V4_INDEXER attention backend does not support."
+  },
+  "gate2_varlen_cudagraphs": {
+    "DeepseekV4FlashInferMLASparseBackend.builder": "DeepseekV4SparseMLAMetadataBuilder",
+    "builder_cg": "UNIFORM_BATCH",
+    "ALWAYS_only_on": "DeepseekV4FlashMLAMetadataBuilder (FLASHMLA_SPARSE_DSV4 / SM100)",
+    "second_adaptive_ValueError_if_gate1_patched": "target attention builder must report ALWAYS, but FLASHINFER_MLA_SPARSE_DSV4 reports UNIFORM_BATCH"
+  },
+  "sm120_decode": "FlashInferMLASparseSM120Impl.forward_mqa is already per-token (q.shape[0] rows). Not the SM90 flatten kernel.",
+  "no_sm121_flag": true
+}

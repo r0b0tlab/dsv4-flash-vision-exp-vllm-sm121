@@ -1,0 +1,25 @@
+Patch-4-class draft shared-expert mapping is ALREADY in live fi512b
+(vLLM 0.28.1rc1.dev137+g5ab628dd1, image sha256:c4c0d7b269b2…).
+
+Live file: /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/dspark.py
+stacked_params_mapping includes:
+  ("gate_up_proj", "w1", 0)
+  ("gate_up_proj", "w3", 1)
+plus ".shared_experts.w2" -> ".shared_experts.down_proj"
+is_layer_param guard avoids markov_w1 collision.
+
+Checkpoint tensors (18): mtp.{0,1,2}.ffn.shared_experts.w{1,2,3}.{weight,scale}
+remap to model.layers.{stage}.ffn.shared_experts.gate_up_proj / down_proj.
+
+Boot log: "DSpark draft model loaded: 100 params"
+No "Skipping unknown DSpark weight" string exists in this tree.
+
+Tony's 0004 patch targeted v0.21 vllm/v1/spec_decode/dspark.py which lacked
+those two stacked rows. Do not copy his B12X bind-mount recipe.
+
+Prior K=5 SHORT c1 26.97 vs K=3 29.98 was extra unused drafts
+(pos accept 80/23/11/4.5/2.2), not an uninitialized shared expert.
+Acceptance was 2.20 vs 2.10 — not the collapse Patch 4 fixes.
+
+Next: relaunch K=5 on the same fi512b image, thinking=high, 32k window,
+measure SHORT + PROSE vs K=3 floors.

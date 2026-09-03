@@ -1,0 +1,42 @@
+{
+  "semantic": {
+    "dt": 14.235,
+    "completion_tokens": 697,
+    "reasoning_tokens": 258,
+    "tok_s": 48.96,
+    "finish": "stop"
+  },
+  "semantic_content_len": 1073,
+  "semantic_content_tail": "fter 2 hours, the drain is closed, so only pipes A and B are open:\n\n\\[\n\\text{New rate} = \\frac{1}{6} + \\frac{1}{9}\n= \\frac{3}{18} + \\frac{2}{18}\n= \\frac{5}{18}\n\\]\n\nTime needed to fill the remaining \\(\\frac{11}{18}\\) of the tank:\n\n\\[\n\\text{Time} = \\frac{\\frac{11}{18}}{\\frac{5}{18}}\n= \\frac{11}{5}\n= 2.2 \\text{ hours}\n\\]\n\nTotal time:\n\n\\[\n2 + 2.2 = 4.2 \\text{ hours}\n\\]\n\n\\[\n\\boxed{4.2 \\text{ hours}}\n\\]",
+  "thinkoff_short256_mean": 49.71,
+  "thinkoff_short256_reps": [
+    {
+      "tok_s": 49.08,
+      "finish": "length",
+      "ct": 256,
+      "rsn": 0,
+      "has_content": true
+    },
+    {
+      "tok_s": 50.07,
+      "finish": "length",
+      "ct": 256,
+      "rsn": 0,
+      "has_content": true
+    },
+    {
+      "tok_s": 49.99,
+      "finish": "length",
+      "ct": 256,
+      "rsn": 0,
+      "has_content": true
+    }
+  ],
+  "spec_delta": {
+    "drafts": 392.0,
+    "draft_tokens": 1960.0,
+    "accepted": 1079.0,
+    "tokens_per_draft": 5.0,
+    "accept_len": 2.7526
+  }
+}

@@ -1,0 +1,21 @@
+# Thin overlay on the working fi512b Vision-Exp image.
+# Parent: dsv4v-vllm:vision-54631-fi512b (sha256:c4c0d7b269b2b0af0d3edaf92cfab1add8644d99eb518f6dbf3e99511ea4e84f)
+# Enables SM121 adaptive verification (flatten gate + ALWAYS graphs + contiguous C128A eidx).
+FROM dsv4v-vllm:vision-54631-fi512b
+COPY indexer.py /usr/local/lib/python3.12/dist-packages/vllm/v1/attention/backends/mla/indexer.py
+COPY sparse_mla.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/sparse_mla.py
+COPY sparse_swa.py /usr/local/lib/python3.12/dist-packages/vllm/v1/attention/backends/mla/sparse_swa.py
+COPY flashinfer_sparse.py /usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/flashinfer_sparse.py
+RUN python3 - <<'PY'
+from pathlib import Path
+want = {
+    Path("/usr/local/lib/python3.12/dist-packages/vllm/v1/attention/backends/mla/indexer.py"): "is_device_capability_family(120)",
+    Path("/usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/sparse_mla.py"): "cap.major == 12",
+    Path("/usr/local/lib/python3.12/dist-packages/vllm/v1/attention/backends/mla/sparse_swa.py"): "cap.major == 12",
+    Path("/usr/local/lib/python3.12/dist-packages/vllm/models/deepseek_v4/nvidia/flashinfer_sparse.py"): "extra_sparse_indices.contiguous",
+}
+for p, needle in want.items():
+    t = p.read_text()
+    assert needle in t, (p, needle)
+print("SM121 adaptive overlay files present")
+PY

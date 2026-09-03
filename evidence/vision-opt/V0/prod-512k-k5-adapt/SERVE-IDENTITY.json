@@ -1,0 +1,18 @@
+{
+  "image_tag": "dsv4v-vllm:vision-54631-fi512b-k5adapt",
+  "image_id": "sha256:f8b73f965834ff8439bf266827229ef71bfdf291689e05b63dc59a74003b517d",
+  "parent_image_id": "sha256:c4c0d7b269b2b0af0d3edaf92cfab1add8644d99eb518f6dbf3e99511ea4e84f",
+  "max_model_len": 524288,
+  "kv_tokens": 1281052,
+  "concurrency_at_512k": 2.44,
+  "k": 5,
+  "enable_adaptive_verification": true,
+  "thinking_default": "off",
+  "gpu_memory_utilization": 0.875,
+  "vision_short": "8/8 PASS",
+  "short256_c1_thinkoff_tok_s": 43.23,
+  "prose_c1_x2_thinkoff_med": 34.87,
+  "prose_c1_x2_thinkoff_agg": 32.73,
+  "td2w300_thinkoff_tok_s": 51.912,
+  "td2w300_complete": true
+}

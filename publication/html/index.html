@@ -26,86 +26,70 @@ h2 { font: 700 1.05rem/1.2 ui-monospace, Menlo, monospace; margin: 28px 0 10px; 
 .badge.pass { color:var(--pass); } .badge.fail { color:var(--fail); }
 table { width:100%; border-collapse:collapse; font: 0.9rem ui-monospace, Menlo, monospace; }
 th,td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
-svg { max-width:100%; height:auto; display:block; }
-footer { margin-top:36px; color:var(--muted); font-size:0.8rem; }
 code { font-family: ui-monospace, Menlo, monospace; overflow-wrap:anywhere; }
 a { color:var(--ink); }
+footer { margin-top:36px; color:var(--muted); font-size:0.8rem; }
 </style>
 </head>
 <body>
 <main>
 <p class="kicker">r0b0tlab · @mr_r0b0t</p>
 <h1>DeepSeek-V4-Flash-Vision-Exp</h1>
-<p>512k context · 2× NVIDIA GB10 · vLLM · speculative k=3 · thinking=high</p>
+<p>512k context · 2× NVIDIA GB10 (SM121) · vLLM · speculative k=5 · adaptive verification</p>
 <p><a href="https://github.com/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121">https://github.com/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121</a></p>
 <section class="hero">
   <div class="kpis">
-    <div><b>179/200</b><span>Q200v2 total · 89.5%</span></div>
-    <div><b>28.88</b><span>SHORT c1 tok/s</span></div>
-    <div><b>58.24</b><span>SHORT c8 tok/s</span></div>
-    <div><b>PASS</b><span>NIAH 25/50/90 + mk</span></div>
+    <div><b>113/185</b><span>Q200v2 total · 61.1%</span></div>
+    <div><b>43.23</b><span>SHORT c1 tok/s (thinking off)</span></div>
+    <div><b>34.87</b><span>PROSE c1 med tok/s (thinking off)</span></div>
+    <div><b>PASS</b><span>Vision 8/8</span></div>
+    <div><b>—</b><span>NIAH 25/50/90 + mk</span></div>
   </div>
 </section>
 
 <h2>Vision</h2>
 <p>Synthetic 8-item exact-match gate: <b>8/8 PASS</b>.</p>
 
-<h2>Quality (qwen38 Q200v2 frozen set)</h2>
+<h2>Quality (qwen38 Q200v2 frozen set, thinking=high)</h2>
 <table>
 <tr><th>Lane</th><th>Result</th></tr>
-<tr><td>GSM8K</td><td>74/80 (92.5%)</td></tr>
-<tr><td>IFEval</td><td>37/40 strict</td></tr>
-<tr><td>HumanEval</td><td>local subprocess 36/40 (4 empty at 8192 cap)</td></tr>
-<tr><td>Hard reasoning</td><td>19/20 (manual vs frozen ref; 1 fail Frobenius 29)</td></tr>
-<tr><td>Text180 total</td><td>166/180 (92.2%)</td></tr>
-<tr><td>BFCL-hard20</td><td>13/20 (65%), thinking=low frozen contract</td></tr>
-<tr><td>Q200v2 total</td><td>179/200 (89.5%)</td></tr>
-<tr><td>Q200 e2e</td><td>mean 39.08 · agg 40.36 tok/s</td></tr>
+<tr><td>GSM8K</td><td>75/80</td></tr>
+<tr><td>HumanEval</td><td>—</td></tr>
+<tr><td>IFEval</td><td>38/40 strict</td></tr>
+<tr><td>Hard reasoning</td><td>—</td></tr>
+<tr><td>Text180 total</td><td>113/165 (68.5%)</td></tr>
+<tr><td>BFCL-hard20</td><td>—</td></tr>
+<tr><td>Q200v2 total</td><td>113/185 (61.1%)</td></tr>
+<tr><td>Q200 e2e</td><td>—</td></tr>
 </table>
 
 <h2>NIAH (advertised 512k)</h2>
-<div class="cards"><article class="card"><div class="top"><span>25%</span><span class="badge pass">PASS</span></div><b>480,407</b><p>prompt tokens</p><p>409.9s</p></article><article class="card"><div class="top"><span>50%</span><span class="badge pass">PASS</span></div><b>480,405</b><p>prompt tokens</p><p>405.8s</p></article><article class="card"><div class="top"><span>90%</span><span class="badge pass">PASS</span></div><b>480,403</b><p>prompt tokens</p><p>396.4s</p></article><article class="card"><div class="top"><span>mk33</span><span class="badge pass">PASS</span></div><b>480,413</b><p>prompt tokens</p><p>401.3s</p></article><article class="card"><div class="top"><span>mk66</span><span class="badge pass">PASS</span></div><b>480,405</b><p>prompt tokens</p><p>402.7s</p></article></div>
-<p>Constructed prompts landed ~480k vs 524032 target (filler rounding). Disclosed.</p>
+<div class="cards"><p>Running — results land when the NIAH ladder closes.</p></div>
+<p>Constructed prompts land at the filler-rounded size below the 524032-token target. Disclosed.</p>
 
-<h2>Throughput</h2>
-<svg viewBox="0 0 640 180" width="100%" role="img" aria-label="concurrency throughput">
-<rect x="60.8" y="87.5" width="80.3" height="64.5" fill="#2f6b3a"/>
-<text x="101.0" y="81.5" text-anchor="middle" fill="#2c2416" font-size="13">28.9</text>
-<text x="101.0" y="170" text-anchor="middle" fill="#5c5346" font-size="12">c1</text>
-<rect x="206.8" y="70.2" width="80.3" height="81.8" fill="#2f6b3a"/>
-<text x="247.0" y="64.2" text-anchor="middle" fill="#2c2416" font-size="13">36.7</text>
-<text x="247.0" y="170" text-anchor="middle" fill="#5c5346" font-size="12">c2</text>
-<rect x="352.9" y="74.4" width="80.3" height="77.6" fill="#2f6b3a"/>
-<text x="393.0" y="68.4" text-anchor="middle" fill="#2c2416" font-size="13">34.8</text>
-<text x="393.0" y="170" text-anchor="middle" fill="#5c5346" font-size="12">c4</text>
-<rect x="498.9" y="22.0" width="80.3" height="130.0" fill="#2f6b3a"/>
-<text x="539.0" y="16.0" text-anchor="middle" fill="#2c2416" font-size="13">58.2</text>
-<text x="539.0" y="170" text-anchor="middle" fill="#5c5346" font-size="12">c8</text>
-</svg>
+<h2>Throughput (thinking off)</h2>
 <table>
-<tr><th>c</th><th>tok/s</th><th>TTFT ms</th><th>TPOT ms</th></tr>
-<tr><td>c1</td><td>28.88</td><td>567.6</td><td>32.53</td></tr><tr><td>c2</td><td>36.66</td><td>650.6</td><td>51.03</td></tr><tr><td>c4</td><td>34.77</td><td>3690.9</td><td>96.65</td></tr><tr><td>c8</td><td>58.24</td><td>1600.5</td><td>119.94</td></tr>
+<tr><th>Lane</th><th>tok/s</th><th>complete</th></tr>
+<tr><td>SHORT c1 (256)</td><td>43.23</td><td>—</td></tr>
+<tr><td>PROSE c1×2</td><td>34.87</td><td>stop</td></tr>
+<tr><td>TD2W300 (1–300 spelled)</td><td>51.912</td><td>yes</td></tr>
 </table>
-<p>TD2W300 spelled 1–300: 55.137 tok/s.</p>
-
-<h2>Thinking modes (short, 256 tok)</h2>
-<table><tr><th>effort</th><th>mean tok/s</th></tr><tr><td>low</td><td>29.93</td></tr><tr><td>high</td><td>32.15</td></tr><tr><td>max</td><td>30.05</td></tr></table>
-<p>Production default remains high. low/max filled the 256 budget in reasoning on this probe.</p>
 
 <h2>Runtime</h2>
 <table>
-<tr><td>Image</td><td><code>dsv4v-vllm:vision-54631-fi512b</code> sha256:c4c0d7b269b2… arm64</td></tr>
+<tr><td>Image</td><td><code>vision-54631-fi512b-k5adapt</code> sha256:f8b73f965834… arm64</td></tr>
+<tr><td>GHCR</td><td><code>ghcr.io/r0b0tlab/dsv4-flash-vision-exp-vllm-sm121:vision-54631-fi512b-k5adapt</code></td></tr>
 <tr><td>max_model_len</td><td>524288</td></tr>
-<tr><td>KV</td><td>fp8 · 1,180,458 tokens · 2.25× at 512k</td></tr>
-<tr><td>Spec</td><td>k=3 probabilistic · adaptive off</td></tr>
-<tr><td>Graphs</td><td>FULL_DECODE_ONLY [1,2,4,8]</td></tr>
-<tr><td>Telemetry</td><td>5226 samples · mean 38.16 W · mean util 80.34%</td></tr>
+<tr><td>KV</td><td>fp8 · 1,281,052 tokens · 2.44× at 512k</td></tr>
+<tr><td>Spec</td><td>k=5 probabilistic · adaptive verification on (SM121 overlay)</td></tr>
+<tr><td>Graphs</td><td>FULL_DECODE_ONLY [1,2,4,8,16,32,48]</td></tr>
+<tr><td>Telemetry</td><td>—</td></tr>
 </table>
 
 <h2>Appendix</h2>
-<p>A.1 HumanEval docker sandbox returned HARNESS_BLOCK on this image id; scores above are local subprocess+timeout.</p>
-<p>A.2 BFCL-hard20 frozen contract uses thinking=low; text180 used thinking=high.</p>
-<p>A.3 k=5 counting ceiling is not this profile. Official vision recipe publishes k=3.</p>
+<p>A.1 HumanEval graded locally via subprocess+timeout (docker sandbox HARNESS_BLOCK on this image id).</p>
+<p>A.2 All quality lanes run thinking=high with thinking_token_budget=2048; throughput lanes run thinking=off.</p>
+<p>A.3 k=6 is illegal on this image (num_speculative_tokens must divide dspark_block_size=5).</p>
 <p>A.4 No private IPs, hostnames, or local paths on this page.</p>
 <footer>r0b0tlab — @mr_r0b0t</footer>
 </main>

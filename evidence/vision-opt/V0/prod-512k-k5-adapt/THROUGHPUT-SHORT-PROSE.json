@@ -1,0 +1,59 @@
+{
+  "short256_c1_thinkoff": {
+    "mean_tok_s": 43.23,
+    "reps": [
+      {
+        "dt": 5.759,
+        "ct": 256,
+        "tok_s": 44.45,
+        "finish": "length",
+        "rsn": 0,
+        "has_content": true
+      },
+      {
+        "dt": 5.94,
+        "ct": 256,
+        "tok_s": 43.1,
+        "finish": "length",
+        "rsn": 0,
+        "has_content": true
+      },
+      {
+        "dt": 6.075,
+        "ct": 256,
+        "tok_s": 42.14,
+        "finish": "length",
+        "rsn": 0,
+        "has_content": true
+      }
+    ],
+    "k3_thinkhigh_floor": 32.15
+  },
+  "prose_c1_x2_thinkoff": {
+    "results": [
+      {
+        "dt": 21.32,
+        "ct": 663,
+        "tok_s": 31.1,
+        "finish": "stop",
+        "rsn": 0,
+        "has_content": true
+      },
+      {
+        "dt": 16.232,
+        "ct": 566,
+        "tok_s": 34.87,
+        "finish": "stop",
+        "rsn": 0,
+        "has_content": true
+      }
+    ],
+    "wall": 37.55,
+    "aggregate_tok_s": 32.73,
+    "per_stream": [
+      31.1,
+      34.87
+    ],
+    "med": 34.87
+  }
+}

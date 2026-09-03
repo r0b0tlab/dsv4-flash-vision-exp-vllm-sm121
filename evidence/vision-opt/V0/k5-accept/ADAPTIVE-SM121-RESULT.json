@@ -1,0 +1,46 @@
+{
+  "serve": {
+    "image": "dsv4v-vllm:vision-54631-fi512b",
+    "max_model_len": 32768,
+    "k": 5,
+    "enable_adaptive_verification": true,
+    "thinking_default": "high",
+    "gpu_memory_utilization": 0.86,
+    "vision_short": "8/8 PASS"
+  },
+  "overlays": [
+    "docker/overlay-sm121-adaptive/indexer.py",
+    "docker/overlay-sm121-adaptive/sparse_mla.py",
+    "docker/overlay-sm121-adaptive/sparse_swa.py",
+    "docker/overlay-sm121-adaptive/flashinfer_sparse.py"
+  ],
+  "gates": {
+    "indexer_use_flattening": true,
+    "indexer_supports_varlen": false,
+    "mla_swa_cg": "ALWAYS on SM12x",
+    "did_not_or_family_120_into_sm90_sm100_deepgemm": true
+  },
+  "short256_c1_think_high": {
+    "mean_tok_s": 42.31,
+    "reps": [42.65, 42.4, 41.87],
+    "k3_floor": 32.15,
+    "k5_full_verify": 26.51,
+    "delta_vs_k3_pct": 31.59,
+    "delta_vs_k5_full_pct": 59.59,
+    "verdict": "WIN",
+    "accept_len": 2.0,
+    "tokens_per_draft": 5.0,
+    "drafts": 255,
+    "accepted": 510,
+    "note": "Draft stays 5-wide. Adaptive trims target verify. Prior k=5 think-high accept_len was 1.18."
+  },
+  "prose_c1_x2": {
+    "aggregate_tok_s": 31.31,
+    "per_stream_med": 31.38,
+    "k3_prose_floor": 31.32,
+    "k5_thinkhigh_prior": 27.73,
+    "delta_vs_k3_pct": -0.03,
+    "delta_vs_k5_prior_pct": 12.91,
+    "verdict": "TIE_vs_k3_WIN_vs_k5"
+  }
+}

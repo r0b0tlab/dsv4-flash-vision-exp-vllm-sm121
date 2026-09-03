@@ -1,0 +1,29 @@
+{
+  "question": "Is there a flag to allow SM121 for DSpark adaptive verification / device-decided query lengths?",
+  "answer": "No. The only related env is VLLM_ADAPTIVE_VERIFICATION_PROFILE_CONTEXT_LEN (startup cost-table KV length). The error-string Pass is enable_adaptive_verification=false or a supporting backend, not an SM121 allowlist.",
+  "live_capability": {"major": 12, "minor": 1, "family_120": true, "family_121": true, "family_90": false, "family_100": false},
+  "gates": {
+    "indexer_device_query_lens": {
+      "file": "vllm/v1/attention/backends/mla/indexer.py",
+      "varlen_paged_mqa": "family 100 + DeepGEMM",
+      "flattened_query_lens": "family 90 + DeepGEMM",
+      "sm121_result": false
+    },
+    "varlen_decode_cudagraphs": {
+      "requirement": "AttentionCGSupport.ALWAYS",
+      "sm100_trtllm_sparse": "ALWAYS",
+      "flashinfer_mla_sparse_default_builder": "UNIFORM_BATCH",
+      "blog": "DSV4 sparse-MLA reports ALWAYS on SM100; elsewhere adaptive rejected at startup"
+    }
+  },
+  "official": {
+    "vision_recipe": "GB200 NVL4 only published run; k=3 + enable_adaptive_verification=true",
+    "adaptive_blog": "8xB300 SM100, FLASH_ATTN, k=7, DeepSeek-V4-Pro-0813",
+    "tracker": "https://github.com/vllm-project/vllm/issues/51303"
+  },
+  "do_not": [
+    "OR family 120 into _supports_flattened_device_query_lens (Hopper DeepGEMM flatten kernels)",
+    "Force ALWAYS on SM120 FlashInfer UNIFORM_BATCH builder",
+    "Treat VLLM_ADAPTIVE_VERIFICATION_PROFILE_CONTEXT_LEN as an enable switch"
+  ]
+}
